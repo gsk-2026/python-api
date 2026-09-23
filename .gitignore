@@ -1,0 +1,21 @@
+# Python cache files (matches globally)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE Configuration (anchored to root folder)
+.idea/
+*.iml
+
+# Environment configurations & secrets
+.env
+.env.*
+
+# Virtual Environments (Explicitly anchors both environments)
+.venv/
+.env/
+
+# Testing framework caches
+logs/
+.pytest_cache/
+pytest-cache-files-*
