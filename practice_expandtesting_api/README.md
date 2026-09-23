@@ -22,12 +22,12 @@ Follow these sequential steps to clone the codebase from GitHub, set up your dev
 ### 1. Clone the Repository
 Open your terminal, navigate to your desired directory workspace, and run the git clone command:
 ```bash
-git clone https://github.com
+git clone https://github.com/gsk-2026/python-api python-api-local
 ```
 
 ### 2. Navigate to the Project Root
 ```bash
-cd python-api   # Navigate to the project root containing all microservice modules, including practice_expandtesting_api
+cd python-api-local   # Navigate to the project root containing all microservice modules, including practice_expandtesting_api
 ```
 
 ### 3. Initialize your Virtual Environment
@@ -35,7 +35,7 @@ Create a localized Python environment (`.venv`) to isolate dependencies:
 ```bash
 # Windows
 python -m venv .venv
-.\venv\Scripts\activate
+source .\venv\Scripts\activate
 
 # macOS / Linux
 python3 -m venv .venv
