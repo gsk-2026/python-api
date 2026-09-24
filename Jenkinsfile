@@ -1,13 +1,14 @@
 pipeline {
+
 agent any 
 
     // Constraint 4: Jenkins handles scheduled execution times for different environments
     triggers {
-    cron('''
-        0 0 * * 1-5 % ENVIRONMENT=DIT;TEST_SUITE=all
-        0 2 * * 6   % ENVIRONMENT=SIT;TEST_SUITE=all
-        0 4 1 * *   % ENVIRONMENT=UAT;TEST_SUITE=integration
-    ''')
+        cron('''
+            0 0 * * 1-5 % ENVIRONMENT=DIT;TEST_SUITE=all
+            0 2 * * 6   % ENVIRONMENT=SIT;TEST_SUITE=all
+            0 4 1 * *   % ENVIRONMENT=UAT;TEST_SUITE=integration
+        ''')
     }
 
     // Constraint 5b: Allows manual parameter selection in Jenkins interface anytime
@@ -75,7 +76,5 @@ agent any 
                 }
             }
         }
-
     }
-
 }
