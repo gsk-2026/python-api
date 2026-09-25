@@ -116,7 +116,4 @@ jobs:
             - Initial Pipeline Trigger Event: ${{ github.event_name }}
             
             The raw execution documents are securely bound to this email context. No metrics have been recorded on persistent cloud storage volumes.
-          attachments: |
-            ${{ env.MODULE_PATH }}/output_reports/integration_report.html
-            ${{ env.MODULE_PATH }}/output_reports/e2e_report.html
-            ${{ env.MODULE_PATH }}/output_reports/performance_report.html
+          attachments: ${{ env.MODULE_PATH }}/output_reports/integration_report.html,${{ env.MODULE_PATH }}/output_reports/e2e_report.html,${{ env.MODULE_PATH }}/output_reports/performance_report.html
