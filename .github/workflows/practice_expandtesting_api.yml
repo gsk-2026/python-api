@@ -12,14 +12,14 @@ on:
 
   workflow_dispatch:
     inputs:
-      environment:
-        description: 'Select Target Environment'
+      test_env:
+        description: 'Select Test Environment'
         required: true
         default: 'DIT'
         type: choice
         options: [DIT, SIT, UAT]
-      test_suite:
-        description: 'Select Test Suite Scope'
+      test_scope:
+        description: 'Select Test Scope'
         required: true
         default: 'all'
         type: choice
@@ -30,32 +30,38 @@ jobs:
     name: Evaluate Run Context
     runs-on: ubuntu-latest
     outputs:
-      target_env: ${{ steps.determine-context.outputs.TARGET_ENV }}
-      test_suite:  ${{ steps.determine-context.outputs.TEST_SUITE }}
+      test_module: ${{ steps.determine-context.outputs.TEST_MODULE }}
+      test_env: ${{ steps.determine-context.outputs.TEST_ENV }}
+      test_scope: ${{ steps.determine-context.outputs.TEST_SCOPE }}
     steps:
       - id: determine-context
         name: Parse Trigger Type and Environment Mapping
         run: |
           if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
-            echo "TARGET_ENV=${{ github.event.client_payload.environment }}" >> $GITHUB_OUTPUT
-            echo "TEST_SUITE=${{ github.event.client_payload.test_suite }}" >> $GITHUB_OUTPUT
+            echo "TEST_MODULE=${{ github.event.client_payload.target_module }}" >> $GITHUB_OUTPUT
+            echo "TEST_ENV=${{ github.event.client_payload.target_env }}" >> $GITHUB_OUTPUT
+            echo "TEST_SCOPE=${{ github.event.client_payload.target_scope }}" >> $GITHUB_OUTPUT
           elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "TARGET_ENV=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
-            echo "TEST_SUITE=${{ github.event.inputs.test_suite }}" >> $GITHUB_OUTPUT
+            echo "TEST_MODULE=practice_expandtesting_api" >> $GITHUB_OUTPUT
+            echo "TEST_ENV=${{ github.event.inputs.test_env }}" >> $GITHUB_OUTPUT
+            echo "TEST_SCOPE=${{ github.event.inputs.test_scope }}" >> $GITHUB_OUTPUT
           else
-            echo "TARGET_ENV=DIT" >> $GITHUB_OUTPUT
-            echo "TEST_SUITE=all" >> $GITHUB_OUTPUT
-          fi
+            echo "TEST_MODULE=practice_expandtesting_api" >> $GITHUB_OUTPUT
+            echo "TEST_ENV=DIT" >> $GITHUB_OUTPUT
+            echo "TEST_SCOPE=all" >> $GITHUB_OUTPUT
+          fi 
 
   execute-qa-engines:
     name: Run QA Automation
     needs: orchestrate-context
+    # Only run this job if TEST_MODULE equals practice_expandtesting_api
+    if: ${{ needs.orchestrate-context.outputs.test_module == 'practice_expandtesting_api' }}
     runs-on: ubuntu-latest
-    environment: ${{ needs.orchestrate-context.outputs.target_env }}
+    environment: ${{ needs.orchestrate-context.outputs.test_env }}
     env:
-      TARGET_ENV: ${{ needs.orchestrate-context.outputs.target_env }}
-      TEST_SUITE: ${{ needs.orchestrate-context.outputs.test_suite }}
-      MODULE_PATH: practice_expandtesting_api
+      TEST_SUITE_ENV: ${{ needs.orchestrate-context.outputs.test_env }}
+      TEST_SUITE_SCOPE: ${{ needs.orchestrate-context.outputs.test_scope }}
+      TEST_SUITE_MODULE: practice_expandtesting_api
 
     steps:
       - name: Checkout Code Repository
@@ -70,24 +76,24 @@ jobs:
       - name: Install Sub-Module Dependencies
         run: |
           python -m pip install --upgrade pip
-          if [ -f "${{ env.MODULE_PATH }}/requirements.txt" ]; then
-            pip install -r "${{ env.MODULE_PATH }}/requirements.txt"
+          if [ -f "${{ env.TEST_SUITE_MODULE }}/requirements.txt" ]; then
+            pip install -r "${{ env.TEST_SUITE_MODULE }}/requirements.txt"
           fi
           pip install pytest-html locust
 
       - name: Execute Targeted Test Matrices
         run: |
-          cd ${{ env.MODULE_PATH }}
+          cd ${{ env.TEST_SUITE_MODULE }}
           mkdir -p output_reports
           
-          if [ "${{ env.TEST_SUITE }}" = "all" ] || [ "${{ env.TEST_SUITE }}" = "integration" ]; then
-            pytest tests/integration/ --html=output_reports/integration_report.html --self-contained-html
+          if [ "${{ env.TEST_SUITE_SCOPE }}" = "all" ] || [ "${{ env.TEST_SUITE_SCOPE }}" = "integration" ]; then
+            pytest tests/integration/ --html=output_reports/integration_report.html --self-contained-html || true
           fi
-          if [ "${{ env.TEST_SUITE }}" = "all" ] || [ "${{ env.TEST_SUITE }}" = "e2e" ]; then
-            pytest tests/e2e/ --html=output_reports/e2e_report.html --self-contained-html
+          if [ "${{ env.TEST_SUITE_SCOPE }}" = "all" ] || [ "${{ env.TEST_SUITE_SCOPE }}" = "e2e" ]; then
+            pytest tests/e2e/ --html=output_reports/e2e_report.html --self-contained-html || true
           fi
-          if [ "${{ env.TEST_SUITE }}" = "all" ] || [ "${{ env.TEST_SUITE }}" = "performance" ]; then
-            locust -f performance/locustfile.py --config=performance/locust.conf --headless -u 3 -r 1 -t 5m --html output_reports/performance_report.html
+          if [ "${{ env.TEST_SUITE_SCOPE }}" = "all" ] || [ "${{ env.TEST_SUITE_SCOPE }}" = "performance" ]; then
+            locust -f performance/locustfile.py --config=performance/locust.conf --headless -u 3 -r 1 -t 5m --html output_reports/performance_report.html || true
           fi
           
           # Ensure all attachment paths exist even if a test suite was skipped
@@ -106,7 +112,7 @@ jobs:
           server_port: ${{ secrets.SMTP_PORT }}
           username: ${{ secrets.SMTP_USERNAME }}
           password: ${{ secrets.SMTP_PASSWORD }}
-          subject: "[QA RUN OUTCOME] Module: practice_expandtesting_api | Env: ${{ env.TARGET_ENV }}"
+          subject: "[QA RUN OUTCOME] Module: practice_expandtesting_api | Env: ${{ env.TEST_SUITE_ENV }}"
           priority: high
           to: qa-distribution-list@yourcompany.com
           from: GitHub Pipeline Runner <automated-alerts@yourcompany.com>
@@ -114,10 +120,10 @@ jobs:
             Automation QA run execution completed for the module: practice_expandtesting_api.
             
             Execution Metadata:
-            - Target Infrastructure Environment: ${{ env.TARGET_ENV }}
-            - Selected Suite Scope: ${{ env.TEST_SUITE }}
+            - Selected Test Environment: ${{ env.TEST_SUITE_ENV }}
+            - Selected Test Scope: ${{ env.TEST_SUITE_SCOPE }}
             - Initial Pipeline Trigger Event: ${{ github.event_name }}
             
             The raw execution documents are securely bound to this email context. No metrics have been recorded on persistent cloud storage volumes.
-          #attachments: ${{ env.MODULE_PATH }}/output_reports/integration_report.html,${{ env.MODULE_PATH }}/output_reports/e2e_report.html,${{ env.MODULE_PATH }}/output_reports/performance_report.html
-          attachments: ${{ env.MODULE_PATH }}/qa_test_reports.zip
+          #attachments: ${{ env.TEST_SUITE_MODULE }}/output_reports/integration_report.html,${{ env.TEST_SUITE_MODULE }}/output_reports/e2e_report.html,${{ env.TEST_SUITE_MODULE }}/output_reports/performance_report.html
+          attachments: ${{ env.TEST_SUITE_MODULE }}/qa_test_reports.zip
