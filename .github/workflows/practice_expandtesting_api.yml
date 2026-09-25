@@ -91,9 +91,12 @@ jobs:
           fi
           
           # Ensure all attachment paths exist even if a test suite was skipped
-          touch output_reports/integration_report.html
-          touch output_reports/e2e_report.html
-          touch output_reports/performance_report.html
+          # touch output_reports/integration_report.html
+          # touch output_reports/e2e_report.html
+          # touch output_reports/performance_report.html
+          
+          # Compress output reports into a zip file
+          zip -r qa_test_reports.zip output_reports/
 
       - name: Securely Mail Out Raw Test Reports
         if: always()
@@ -116,4 +119,5 @@ jobs:
             - Initial Pipeline Trigger Event: ${{ github.event_name }}
             
             The raw execution documents are securely bound to this email context. No metrics have been recorded on persistent cloud storage volumes.
-          attachments: ${{ env.MODULE_PATH }}/output_reports/integration_report.html,${{ env.MODULE_PATH }}/output_reports/e2e_report.html,${{ env.MODULE_PATH }}/output_reports/performance_report.html
+          #attachments: ${{ env.MODULE_PATH }}/output_reports/integration_report.html,${{ env.MODULE_PATH }}/output_reports/e2e_report.html,${{ env.MODULE_PATH }}/output_reports/performance_report.html
+          attachments: ${{ env.MODULE_PATH }}/qa_test_reports.zip
