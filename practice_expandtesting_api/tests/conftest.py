@@ -172,7 +172,7 @@ def manage_context_user_register_login_post_note():
 
     note_deleted = note_context.get("already_deleted")
     if not note_deleted:
-        resp_delete = requests.delete(f"{API_NOTES_ENDPOINT}/{user_note_context.get("note_context", {}).get("note_id")}", headers=headers, timeout=API_TIMEOUT)
+        resp_delete = requests.delete(f"{API_NOTES_ENDPOINT}/{user_note_context.get('note_context', {}).get('note_id')}", headers=headers, timeout=API_TIMEOUT)
         check.is_in(resp_delete.status_code, [200, 202, 204, 404, 410], msg=f"Failed to delete note with status code {resp_delete.status_code}")
 
     user_test_step = user_context.get("user_test_step")
