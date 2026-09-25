@@ -79,21 +79,24 @@ jobs:
         run: |
           cd ${{ env.MODULE_PATH }}
           mkdir -p output_reports
+          
+          if [ "${{ env.TEST_SUITE }}" = "all" ] || [ "${{ env.TEST_SUITE }}" = "integration" ]; then
+            pytest tests/integration/ --html=output_reports/integration_report.html --self-contained-html
+          fi
+          if [ "${{ env.TEST_SUITE }}" = "all" ] || [ "${{ env.TEST_SUITE }}" = "e2e" ]; then
+            pytest tests/e2e/ --html=output_reports/e2e_report.html --self-contained-html
+          fi
+          if [ "${{ env.TEST_SUITE }}" = "all" ] || [ "${{ env.TEST_SUITE }}" = "performance" ]; then
+            locust -f performance/locustfile.py --config=performance/locust.conf --headless --html output_reports/performance_report.html
+          fi
+          
+          # Ensure all attachment paths exist even if a test suite was skipped
           touch output_reports/integration_report.html
           touch output_reports/e2e_report.html
           touch output_reports/performance_report.html
-          
-          if [ "${{ env.TEST_SUITE }}" = "all" ] || [ "${{ env.TEST_SUITE }}" = "integration" ]; then
-            pytest tests/integration/ --html=output_reports/integration_report.html --self-contained-html || true
-          fi
-          if [ "${{ env.TEST_SUITE }}" = "all" ] || [ "${{ env.TEST_SUITE }}" = "e2e" ]; then
-            pytest tests/e2e/ --html=output_reports/e2e_report.html --self-contained-html || true
-          fi
-          if [ "${{ env.TEST_SUITE }}" = "all" ] || [ "${{ env.TEST_SUITE }}" = "performance" ]; then
-            locust -f performance/locustfile.py --config=performance/locust.conf --headless --html output_reports/performance_report.html || true
-          fi
 
       - name: Securely Mail Out Raw Test Reports
+        if: always()
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: ${{ secrets.SMTP_SERVER }}
