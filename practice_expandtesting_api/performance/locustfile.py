@@ -80,7 +80,7 @@ class NotesLifecycleLoadTest(SequentialTaskSet):
             if response.status_code != 200:
                 response.failure(f"Failed available authorizations - 'status_code': {response.status_code}")
             elif not json_data.get("success"):
-                response.failure(f"Available authorizations - 'success': {json_data.get("success")}")
+                response.failure(f"Available authorizations - 'success': {json_data.get('success')}")
 
     
     @task
@@ -92,7 +92,7 @@ class NotesLifecycleLoadTest(SequentialTaskSet):
             if response.status_code != 200:
                 response.failure(f"Failed get profile - 'status_code': {response.status_code}")
             elif not json_data.get("success"):
-                response.failure(f"Get profile - 'success': {json_data.get("success")}")
+                response.failure(f"Get profile - 'success': {json_data.get('success')}")
 
 
     @task
@@ -105,7 +105,7 @@ class NotesLifecycleLoadTest(SequentialTaskSet):
             if response.status_code != 200:
                 response.failure(f"Failed get profile - 'status_code': {response.status_code}")
             elif not json_data.get("success"):
-                response.failure(f"Get profile - 'success': {json_data.get("success")}")
+                response.failure(f"Get profile - 'success': {json_data.get('success')}")
 
 
     @task
@@ -148,7 +148,7 @@ class NotesLifecycleLoadTest(SequentialTaskSet):
             elif response.status_code != 200:
                 response.failure(f"Put note Failed - HTTP Status: {response.status_code}")
             elif not resp_json["success"]:
-                response.failure(f"Put node - 'success': {resp_json.get("success")}")
+                response.failure(f"Put node - 'success': {resp_json.get('success')}")
 
 
     @task
@@ -166,7 +166,7 @@ class NotesLifecycleLoadTest(SequentialTaskSet):
             elif response.status_code != 200:
                 response.failure(f"Patch note Failed - HTTP Status: {response.status_code}")
             elif not resp_json["success"]:
-                response.failure(f"Patch Note - 'success': {resp_json.get("success")}")
+                response.failure(f"Patch Note - 'success': {resp_json.get('success')}")
 
 
     @task
@@ -184,7 +184,7 @@ class NotesLifecycleLoadTest(SequentialTaskSet):
             elif response.status_code != 200:
                 response.failure(f"Patch note Failed - HTTP Status: {response.status_code}")
             elif not resp_json["success"]:
-                response.failure(f"Patch Note - 'success': {resp_json.get("success")}")
+                response.failure(f"Patch Note - 'success': {resp_json.get('success')}")
 
 
 
