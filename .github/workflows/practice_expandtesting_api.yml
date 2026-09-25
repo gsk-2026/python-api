@@ -87,7 +87,7 @@ jobs:
             pytest tests/e2e/ --html=output_reports/e2e_report.html --self-contained-html
           fi
           if [ "${{ env.TEST_SUITE }}" = "all" ] || [ "${{ env.TEST_SUITE }}" = "performance" ]; then
-            locust -f performance/locustfile.py --config=performance/locust.conf --headless --html output_reports/performance_report.html
+            locust -f performance/locustfile.py --config=performance/locust.conf --headless -u 3 -r 1 -t 5m --html output_reports/performance_report.html
           fi
           
           # Ensure all attachment paths exist even if a test suite was skipped
