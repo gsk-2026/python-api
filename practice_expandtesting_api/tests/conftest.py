@@ -59,7 +59,7 @@ def manage_user_deletion(user_context) -> None:
     if user_context["user_test_step"] == UserTestStep.ACCESS_GRANTED:
         for idx in range(len(user_context["note_id"])):
             headers = user_context["headers_login"]
-            resp_delete = requests.delete(f"{API_NOTES_ENDPOINT}/{user_context["note_id"][idx]}", headers=headers, timeout=API_TIMEOUT)
+            resp_delete = requests.delete(f"{API_NOTES_ENDPOINT}/{user_context['note_id'][idx]}", headers=headers, timeout=API_TIMEOUT)
             check.equal(resp_delete.status_code, 200, msg=f"Failed to delete note with 'status_code': {resp_delete.status_code}")
 
     # delete the user

@@ -73,7 +73,7 @@ def test_notes_get_note_by_id_200(manage_context_user_register_login_post_note):
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
     note_context_data = note_context.get("note_data")
-    target_url = f"{API_NOTES_ENDPOINT}/{note_context.get("note_id")}"
+    target_url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
 
     response = requests.get(target_url, headers=user_context.get("headers_login"))
     check.equal(response.status_code, 200, msg=f"Expected 200, but got: {response.status_code}")

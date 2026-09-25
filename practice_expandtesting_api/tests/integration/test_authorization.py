@@ -53,7 +53,7 @@ def test_health_check_response_header_200(manage_context_primary_user_register_l
 def test_auth_negative_with_no_token_specified_200():
     response = requests.get(API_BASE_URL, headers={"Authorization": "Bearer invalid-token", "Accept": "application/json"})
     check.equal(response.status_code, 200, msg=f"Expected 401, but got {response.status_code}")
-    check.is_true(response.json().get("success"), msg=f"Expected success False, but got {response.json().get("success")}")
+    check.is_true(response.json().get("success"), msg=f"Expected success False, but got {response.json().get('success')}")
 
 
 
@@ -62,9 +62,9 @@ def test_auth_negative_missing_token_200():
 
     check.equal(response.status_code, 200, msg=f"Expected 200, but got {response.status_code}")
     response_data = response.json()
-    check.equal(response_data.get("status"), 200, msg=f"Expected status 200, but got {response_data.get("status")}")
-    check.equal(response_data.get("message"), "Notes API is Running", msg=f"Expected 'Notes API is Running' in message, but got {response_data.get("message")}")
-    check.is_true(response_data.get("success"), msg=f"Expected success False, but got {response_data.get("success")}")
+    check.equal(response_data.get("status"), 200, msg=f"Expected status 200, but got {response_data.get('status')}")
+    check.equal(response_data.get("message"), "Notes API is Running", msg=f"Expected 'Notes API is Running' in message, but got {response_data.get('message')}")
+    check.is_true(response_data.get("success"), msg=f"Expected success False, but got {response_data.get('success')}")
 
 
 
@@ -78,9 +78,9 @@ def test_auth_negative_invalid_tokens_200(invalid_token):
 
     check.equal(response.status_code, 200, msg=f"Expected 200, but got {response.status_code}")
     response_data = response.json()
-    check.equal(response_data.get("status"), 200, msg=f"Expected status 200, but got {response_data.get("status")}")
-    check.equal(response_data.get("message"), "Notes API is Running", msg=f"Expected 'Notes API is Running' in message, but got {response_data.get("message")}")
-    check.is_true(response_data.get("success"), msg=f"Expected success False, but got {response_data.get("success")}")
+    check.equal(response_data.get("status"), 200, msg=f"Expected status 200, but got {response_data.get('status')}")
+    check.equal(response_data.get("message"), "Notes API is Running", msg=f"Expected 'Notes API is Running' in message, but got {response_data.get('message')}")
+    check.is_true(response_data.get("success"), msg=f"Expected success False, but got {response_data.get('success')}")
 
 
 
@@ -95,6 +95,6 @@ def test_auth_edge_and_boundary_injection_tokens_200(edge_case_token):
 
     check.equal(response.status_code, 200, msg=f"Expected 200, but got {response.status_code}")
     response_data = response.json()
-    check.equal(response_data.get("status"), 200, msg=f"Expected status 200, but got {response_data.get("status")}")
-    check.equal(response_data.get("message"), "Notes API is Running", msg=f"Expected 'Notes API is Running' in message, but got {response_data.get("message")}")
-    check.is_true(response_data.get("success"), msg=f"Expected success False, but got {response_data.get("success")}")
+    check.equal(response_data.get("status"), 200, msg=f"Expected status 200, but got {response_data.get('status')}")
+    check.equal(response_data.get("message"), "Notes API is Running", msg=f"Expected 'Notes API is Running' in message, but got {response_data.get('message')}")
+    check.is_true(response_data.get("success"), msg=f"Expected success False, but got {response_data.get('success')}")
