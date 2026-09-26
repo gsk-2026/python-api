@@ -67,7 +67,7 @@ pip install -r requirements.txt
 
 ## Cross-Module Test Execution
 
-All runtime execution triggers must be dispatched from the **`python-api` project root** folder to ensure clean, deterministic path resolution.
+All runtime execution triggers must be dispatched from the **`python-api` project root** folder to ensure clean, deterministic path resolution.  For detailed steps, please refer to README.md of individual modules
 
 ### Module 1: Practice ExpandTesting API
 To work out of the ExpandTesting microservice suite, install its respective manifest profile and fire tests selectively:
@@ -78,13 +78,6 @@ pip install -r practice_expandtesting_api/requirements.txt
 
 # Run the entire functional test suite (Unit, Integration, E2E)
 pytest practice_expandtesting_api
-
-# Run a localized test domain slice
-pytest practice_expandtesting_api/tests/integration
-pytest practice_expandtesting_api/tests/e2e
-
-# Run Performance load test vectors (Locust)
-PYTHONPATH=practice_expandtesting_api locust -f practice_expandtesting_api/performance/locustfile.py --web-port 8090
 ```
 
 ### Module 2: Future New Applications (e.g., `a_api`)
