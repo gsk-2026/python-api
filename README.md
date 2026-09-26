@@ -103,3 +103,33 @@ pytest a_api
 | :--- | :--- | :--- | :--- |
 | `practice_expandtesting_api` | Practice Portal API Health Checks | Pytest & Locust | 🟢 Active |
 | `a_api` / `b_api` | Scaled Business Testing Sub-systems | Pytest | 🟡 Planning |
+
+
+---
+
+## CI/CD Pipelines
+
+This repository supports flexible automated execution using both **GitHub Actions** and **Jenkins**.
+
+### Pipeline Trigger Options
+
+- **On-Demand / Manual Triggers:** Can be triggered manually at any time via `workflow_dispatch` in **GitHub Actions** or **Jenkins ("Build with Parameters")**.
+- **Automated Code Events:** Runs automatically on push or pull request events to key branches (`main`, `develop`).
+- **Scheduled Runs:** Automated cron schedules can be configured in **Jenkins** (e.g., nightly/weekly regression test suites).
+
+
+### GitHub Actions Pipeline
+
+The GitHub Actions workflow manages manual on-demand executions and automated test runs on git events.
+
+#### Workflow Features & Controls
+- **Flexible Scope Control (`TEST_SUITE_SCOPE`):** Execute `all`, `integration`, `e2e`, or `performance` test suites.
+- **Dynamic Target Environments (`TEST_SUITE_ENV`):** Seamlessly run tests against `DFT`, `DIT`, `SIT`, or `UAT`.
+- **Standalone HTML Reporting:** Automatically generates and archives HTML reports for Pytest and Locust.
+- **Fault-Tolerant Execution:** Configured with `|| true` to ensure HTML reports are generated and uploaded even when tests fail.
+
+#### Local Terminal Trigger Equivalents
+
+Please refer the specification from README of individual modules
+
+---
