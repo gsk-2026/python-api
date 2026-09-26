@@ -4,7 +4,7 @@ import requests
 from pytest_check import check
 
 from config.settings import (
-    API_NOTES_ENDPOINT,
+    ApiEndpoints,
     TEST_SLEEP_IN_SECOND
 )
 
@@ -24,7 +24,7 @@ def test_notes_delete_success_200(manage_context_user_register_login_post_note):
     time.sleep(TEST_SLEEP_IN_SECOND)  # Ensure the note is fully created before deletion
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
-    url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
+    url = f"{ApiEndpoints.notes()}/{note_context.get('note_id')}"
     response = requests.delete(url, headers=user_context.get("headers_login"))
     check.equal(response.status_code, 200, msg=f"Expected 200, but got {response.status_code}")
     user_note_context["note_context"]["already_deleted"] = True
@@ -46,7 +46,7 @@ def test_notes_delete_duplicate_200_404(manage_context_user_register_login_post_
     time.sleep(TEST_SLEEP_IN_SECOND)  # Ensure the note is fully created before deletion
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
-    url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
+    url = f"{ApiEndpoints.notes()}/{note_context.get('note_id')}"
     first_resp = requests.delete(url, headers=user_context.get("headers_login"))
     user_note_context["note_context"]["already_deleted"] = True
 
@@ -69,7 +69,7 @@ def test_notes_delete_missing_accept_200(manage_context_user_register_login_post
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
     time.sleep(TEST_SLEEP_IN_SECOND)  # Ensure the note is fully created before deletion
-    url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
+    url = f"{ApiEndpoints.notes()}/{note_context.get('note_id')}"
     headers = user_context["headers_login"].copy()
     headers.pop("Accept", None)
 
@@ -86,7 +86,7 @@ def test_notes_delete_missing_content_type_200(manage_context_user_register_logi
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
     time.sleep(TEST_SLEEP_IN_SECOND)  # Ensure the note is fully created before deletion
-    url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
+    url = f"{ApiEndpoints.notes()}/{note_context.get('note_id')}"
     headers = user_context["headers_login"].copy()
     headers.pop("Content-Type", None)
 
@@ -103,7 +103,7 @@ def test_notes_delete_missing_accept_and_content_type_200(manage_context_user_re
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
     time.sleep(TEST_SLEEP_IN_SECOND)  # Ensure the note is fully created before deletion
-    url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
+    url = f"{ApiEndpoints.notes()}/{note_context.get('note_id')}"
     headers = user_context["headers_login"].copy()
     headers.pop("Accept", None)
     headers.pop("Content-Type", None)
@@ -121,7 +121,7 @@ def test_notes_delete_missing_token_401(manage_context_user_register_login_post_
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
     time.sleep(TEST_SLEEP_IN_SECOND)  # Ensure the note is fully created before deletion
-    url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
+    url = f"{ApiEndpoints.notes()}/{note_context.get('note_id')}"
     headers = user_context["headers_login"].copy()
     headers.pop("x-auth-token", None)
 
@@ -143,7 +143,7 @@ def test_notes_delete_note_invalid_token_401(new_token, manage_context_user_regi
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
     time.sleep(TEST_SLEEP_IN_SECOND)  # Ensure the note is fully created before deletion
-    url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
+    url = f"{ApiEndpoints.notes()}/{note_context.get('note_id')}"
     headers = user_context["headers_login"].copy()
     headers["x-auth-token"] = new_token
     response = requests.delete(url, headers=headers)
@@ -168,7 +168,7 @@ def test_notes_delete_note_invalid_id_400(malformed_id, manage_context_user_regi
     user_note_context = manage_context_user_register_login_post_note
     user_context = user_note_context.get("user_context")
     time.sleep(TEST_SLEEP_IN_SECOND)  # Ensure the note is fully created before deletion
-    url = f"{API_NOTES_ENDPOINT}/{malformed_id}"
+    url = f"{ApiEndpoints.notes()}/{malformed_id}"
     headers = user_context["headers_login"].copy()
     response = requests.delete(url, headers=headers)
     resp_json = response.json()

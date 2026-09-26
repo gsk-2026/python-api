@@ -4,8 +4,7 @@ import requests
 from pytest_check import check
 
 from config.settings import (
-    API_USER_LOGIN_ENDPOINT,
-    API_USER_CHANGE_PASSWORD_ENDPOINT,
+    ApiEndpoints,
     TEST_SLEEP_IN_SECOND
 )
 
@@ -29,7 +28,7 @@ def test_users_change_password_success_200(manage_context_primary_user_register_
         "currentPassword": manage_context_primary_user_register_login["credentials"]["password"],
         "newPassword": new_password
     }
-    response = requests.post(API_USER_CHANGE_PASSWORD_ENDPOINT, headers=manage_context_primary_user_register_login["headers_login"], json=payload)
+    response = requests.post(ApiEndpoints.user_change_password(), headers=manage_context_primary_user_register_login["headers_login"], json=payload)
     check.equal(response.status_code, 200, f"Expected 200 OK, got {response.status_code}")
     manage_context_primary_user_register_login["user_payload"]["password"] = new_password
     manage_context_primary_user_register_login["credentials"]["password"] = new_password
@@ -55,7 +54,7 @@ def test_users_change_password_missing_token_401(manage_context_primary_user_reg
     headers = manage_context_primary_user_register_login["headers_login"].copy()
     headers.pop("x-auth-token", None)
 
-    response = requests.post(API_USER_CHANGE_PASSWORD_ENDPOINT, headers=headers, json=payload)
+    response = requests.post(ApiEndpoints.user_change_password(), headers=headers, json=payload)
     check.equal(response.status_code, 401, f"Expected 401 Unauthorized, got {response.status_code}")
     check.is_in("Unauthorized", str(response.reason), "Expected Unauthorized reason not found")
     check.is_in("no authentication token specified in x-auth-token header", response.json().get("message", "").lower(), "Expected unauthorized message not found")
@@ -66,7 +65,7 @@ def test_users_change_password_wrong_current_password_400(manage_context_primary
     wrong_new_password = "Wrong_" + manage_context_primary_user_register_login["credentials"]["password"]
     payload = { "currentPassword": wrong_new_password, "newPassword": "New_QATesterPSWD789!" }
 
-    response = requests.post(API_USER_CHANGE_PASSWORD_ENDPOINT, headers=manage_context_primary_user_register_login["headers_login"], json=payload)
+    response = requests.post(ApiEndpoints.user_change_password(), headers=manage_context_primary_user_register_login["headers_login"], json=payload)
     check.equal(response.status_code, 400, f"Expected 400 Bad Request, got {response.status_code}")
     check.is_in("bad request", response.reason.lower(), "Expected bad request reason not found")
 
@@ -89,7 +88,7 @@ def test_users_change_password_invalid_new_password_400(scenario_name, invalid_p
     if "currentPassword" in invalid_payload and invalid_payload["currentPassword"] != "":
         invalid_payload["currentPassword"] = manage_context_primary_user_register_login["credentials"]["password"]
 
-    response = requests.post(API_USER_CHANGE_PASSWORD_ENDPOINT, headers=manage_context_primary_user_register_login["headers_login"], json=invalid_payload)
+    response = requests.post(ApiEndpoints.user_change_password(), headers=manage_context_primary_user_register_login["headers_login"], json=invalid_payload)
     assert response.status_code == 400, f"Expected 400, but got: {response.status_code}. Scenario '{scenario_name}' failed"
 
     json_data = response.json()
@@ -102,7 +101,7 @@ def test_users_change_password_credential_lifecycle_401(manage_context_primary_u
     current_password = manage_context_primary_user_register_login["credentials"]["password"]
     new_password = "New_" + current_password
     payload = {"currentPassword": current_password, "newPassword": new_password}
-    change_resp = requests.post(API_USER_CHANGE_PASSWORD_ENDPOINT, json=payload, headers=manage_context_primary_user_register_login["headers_login"])
+    change_resp = requests.post(ApiEndpoints.user_change_password(), json=payload, headers=manage_context_primary_user_register_login["headers_login"])
     check.equal(change_resp.status_code, 200, f"Expected 200 OK, got {change_resp.status_code}")
     check.is_true(change_resp.json().get("success"), "Expected success to be True")
     check.is_in("The password was successfully updated", change_resp.json().get("message"), "Expected success message not found")
@@ -115,7 +114,7 @@ def test_users_change_password_credential_lifecycle_401(manage_context_primary_u
         "email": manage_context_primary_user_register_login["credentials"]["email"],
         "password": current_password
     }
-    login_resp = requests.post(API_USER_LOGIN_ENDPOINT, json=payload_with_old_password)
+    login_resp = requests.post(ApiEndpoints.user_login(), json=payload_with_old_password)
     check.equal(login_resp.status_code, 401, f"Expected 401 Unauthorized, got {login_resp.status_code}")
     check.is_false(login_resp.json().get("success"), "Expected success to be False")
     check.is_in("Incorrect email address or password", login_resp.json().get("message"), "Expected incorrect credentials message not found")
@@ -126,7 +125,7 @@ def test_users_change_password_credential_lifecycle_401(manage_context_primary_u
 def test_users_change_password_reject_invalid_methods_404(http_method):
     response = requests.request(
         http_method,
-        API_USER_CHANGE_PASSWORD_ENDPOINT
+        ApiEndpoints.user_change_password()
     )
     status = response.status_code
     check.equal(status, 404, f"Expected 404 Not Found for {http_method}, but got {status}")

@@ -1,7 +1,7 @@
 import pytest
 import requests
 from pytest_check import check
-from config.settings import API_NOTES_ENDPOINT
+from config.settings import ApiEndpoints
 
 
 """
@@ -21,7 +21,7 @@ def test_notes_patch_required_completed_success_200(manage_context_user_register
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
     note_context_data = note_context.get("note_data")
-    patch_url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
+    patch_url = f"{ApiEndpoints.notes()}/{note_context.get('note_id')}"
     completed = False if note_context.get("note_data").get("completed") is True else True
     patch_payload = { "completed": completed }
 
@@ -72,7 +72,7 @@ def test_notes_patch_required_completed_and_non_required_title_200(manage_contex
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
     note_context_data = note_context.get("note_data")
-    patch_url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
+    patch_url = f"{ApiEndpoints.notes()}/{note_context.get('note_id')}"
     title = "Updated : " + note_context.get("note_data").get("title")
     completed = False if note_context.get("note_data").get("completed") is True else True
     patch_payload = {"title": f"{title}", "completed": completed}
@@ -123,7 +123,7 @@ def test_notes_patch_non_required_title_400(manage_context_user_register_login_p
     user_note_context = manage_context_user_register_login_post_note
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
-    patch_url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
+    patch_url = f"{ApiEndpoints.notes()}/{note_context.get('note_id')}"
     title = "Updated : " + note_context.get("note_data").get("title")
     patch_payload = {"title": f"{title}"}
 
@@ -140,7 +140,7 @@ def test_notes_patch_non_required_category_400(new_category, manage_context_user
     user_note_context = manage_context_user_register_login_post_note
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
-    patch_url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
+    patch_url = f"{ApiEndpoints.notes()}/{note_context.get('note_id')}"
     patch_payload = {"category": new_category}
 
     response = requests.patch(patch_url, headers=user_context.get("headers_login"), json=patch_payload)
@@ -156,7 +156,7 @@ def test_notes_patch_empty_object_payload_400(manage_context_user_register_login
     user_note_context = manage_context_user_register_login_post_note
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
-    patch_url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
+    patch_url = f"{ApiEndpoints.notes()}/{note_context.get('note_id')}"
     response = requests.patch(patch_url, headers=user_context.get("headers_login"), json={})
 
     check.equal(response.status_code, 400)
@@ -170,7 +170,7 @@ def test_notes_patch_missing_auth_token_401(manage_context_user_register_login_p
     user_note_context = manage_context_user_register_login_post_note
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
-    patch_url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
+    patch_url = f"{ApiEndpoints.notes()}/{note_context.get('note_id')}"
     headers = user_context.get("headers_login").copy()
     headers.pop("x-auth-token")
 
@@ -184,7 +184,7 @@ def test_notes_patch_missing_accept_200(manage_context_user_register_login_post_
     user_note_context = manage_context_user_register_login_post_note
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
-    patch_url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
+    patch_url = f"{ApiEndpoints.notes()}/{note_context.get('note_id')}"
     headers = user_context.get("headers_login").copy()
     headers.pop("Accept")
     completed = False if note_context.get("note_data").get("completed") is True else True
@@ -206,7 +206,7 @@ def test_notes_patch_missing_content_type_200(manage_context_user_register_login
     user_note_context = manage_context_user_register_login_post_note
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
-    patch_url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
+    patch_url = f"{ApiEndpoints.notes()}/{note_context.get('note_id')}"
     headers = user_context.get("headers_login").copy()
     headers.pop("Content-Type")
     completed = False if note_context.get("note_data").get("completed") is True else True
@@ -229,7 +229,7 @@ def test_notes_patch_required_completed_invalid_datatype_400(new_completed, mana
     user_note_context = manage_context_user_register_login_post_note
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
-    patch_url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
+    patch_url = f"{ApiEndpoints.notes()}/{note_context.get('note_id')}"
     patch_payload = {"completed": new_completed}
 
     response = requests.patch(patch_url, headers=user_context.get("headers_login"), json=patch_payload)
@@ -243,7 +243,7 @@ def test_notes_patch_required_completed_valid_datatype_400(new_completed, manage
     user_note_context = manage_context_user_register_login_post_note
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
-    patch_url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
+    patch_url = f"{ApiEndpoints.notes()}/{note_context.get('note_id')}"
     patch_payload = {"completed": new_completed}
 
     response = requests.patch(patch_url, headers=user_context.get("headers_login"), json=patch_payload)

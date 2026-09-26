@@ -1,7 +1,7 @@
 import pytest
 import requests
 from pytest_check import check
-from config.settings import API_NOTES_ENDPOINT
+from config.settings import ApiEndpoints
 
 
 """
@@ -23,7 +23,7 @@ def test_notes_post_create_note_200(manage_context_primary_user_register_login):
         "description": "Verify API endpoint https://practice.expandtesting.com/notes/api/api-docs/#/Notes",
         "category": "Home"      # Home, Work, Personal
     }
-    response = requests.post(API_NOTES_ENDPOINT, headers=user_context.get("headers_login"), json=payload)
+    response = requests.post(ApiEndpoints.notes(), headers=user_context.get("headers_login"), json=payload)
     check.equal(response.status_code, 200) or check.equal(response.status_code, 201)
 
     resp_json = response.json()
@@ -71,7 +71,7 @@ def test_notes_post_missing_accept_header_200(manage_context_primary_user_regist
         "description": "Missing Accept headers context",
         "category": "Personal"      # Home, Work, Personal
     }
-    response = requests.post(API_NOTES_ENDPOINT, headers=headers, json=payload)
+    response = requests.post(ApiEndpoints.notes(), headers=headers, json=payload)
     check.is_in(response.status_code, [200, 201]), f"Expected [200, 201], but got {response.status_code}"
 
     resp_json = response.json()
@@ -120,7 +120,7 @@ def test_notes_post_missing_content_type_header_200(manage_context_primary_user_
         "category": "Personal"      # Home, Work, Personal
     }
 
-    response = requests.post(API_NOTES_ENDPOINT, headers=headers, json=payload)
+    response = requests.post(ApiEndpoints.notes(), headers=headers, json=payload)
     check.is_in(response.status_code, [200, 201]), f"Expected [200, 201], but got {response.status_code}"
 
     json_data = response.json()
@@ -143,7 +143,7 @@ def test_notes_post_missing_auth_token_401():
         "category": "Work"      # Home, Work, Personal
     }
     headers = {"Content-Type": "application/json", "Accept": "application/json"}
-    response = requests.post(API_NOTES_ENDPOINT, headers=headers, json=payload)
+    response = requests.post(ApiEndpoints.notes(), headers=headers, json=payload)
     check.equal(response.status_code, 401)
     resp_data = response.json()
     check.equal(resp_data.get("status"), 401)
@@ -165,7 +165,7 @@ def test_notes_post_missing_auth_token_401():
 )
 def test_notes_post_invalid_payload_400(scenario_name, invalid_payload, manage_context_primary_user_register_login):
     user_context = manage_context_primary_user_register_login
-    response = requests.post(API_NOTES_ENDPOINT, headers=user_context.get("headers_login"), json=invalid_payload)
+    response = requests.post(ApiEndpoints.notes(), headers=user_context.get("headers_login"), json=invalid_payload)
     check.equal(response.status_code, 400, f"Expected 400, but got {response.status_code}. Scenario: {scenario_name} failed")
     check.is_false(response.json().get("success"))
 
@@ -181,7 +181,7 @@ def test_notes_post_data_isolation_verification_200(manage_context_primary_user_
         "description": "User A : Note Description.",
         "category": "Home"
     }
-    creation_resp = requests.post(API_NOTES_ENDPOINT, headers=p_user_context.get("headers_login"), json=p_note_payload)
+    creation_resp = requests.post(ApiEndpoints.notes(), headers=p_user_context.get("headers_login"), json=p_note_payload)
     check.is_in(creation_resp.status_code, [200, 201], f"Expected [200, 201], but got {creation_resp.status_code}")
     p_note_id = creation_resp.json().get("data", {}).get("id")
 
@@ -191,8 +191,8 @@ def test_notes_post_data_isolation_verification_200(manage_context_primary_user_
         "description": "User B : Note Description.",
         "category": "Work"
     }
-    requests.post(API_NOTES_ENDPOINT, headers=s_user_context.get("headers_login"), json=s_note_payload)
-    s_notes_resp = requests.get(API_NOTES_ENDPOINT, headers=s_user_context.get("headers_login"))
+    requests.post(ApiEndpoints.notes(), headers=s_user_context.get("headers_login"), json=s_note_payload)
+    s_notes_resp = requests.get(ApiEndpoints.notes(), headers=s_user_context.get("headers_login"))
     check.equal(s_notes_resp.status_code, 200)
 
     s_note_ids = [note.get("id") for note in s_notes_resp.json().get("data", [])]

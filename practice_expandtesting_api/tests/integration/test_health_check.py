@@ -4,7 +4,7 @@ import requests
 from pytest_check import check
 
 from config.settings import (
-    API_HEALTH_CHECK_ENDPOINT,
+    ApiEndpoints,
     API_TIMEOUT,
     TEST_PERFORMANCE_LOOP
 )
@@ -20,7 +20,7 @@ curl -X 'GET' \
 
 
 def test_health_check_happy_path_200():
-    response = requests.get(API_HEALTH_CHECK_ENDPOINT, timeout=API_TIMEOUT)
+    response = requests.get(ApiEndpoints.health_check(), timeout=API_TIMEOUT)
     check.equal(response.status_code, 200, msg=f"Expected 200, but got {response.status_code}")
 
     content_type = response.headers.get("Content-Type", "")
@@ -40,7 +40,7 @@ def test_health_check_happy_path_200():
 def test_health_check_accept_content_type_xml_200():
     custom_headers = {"Accept": "application/xml"}
     response = requests.get(
-        API_HEALTH_CHECK_ENDPOINT,
+        ApiEndpoints.health_check(),
         headers=custom_headers,
         timeout=API_TIMEOUT
     )
@@ -56,7 +56,7 @@ def test_health_check_accept_content_type_xml_200():
 def test_health_check_accept_content_type_json_200():
     custom_headers = {"Accept": "application/json"}
     response = requests.get(
-        API_HEALTH_CHECK_ENDPOINT,
+        ApiEndpoints.health_check(),
         headers=custom_headers,
         timeout=API_TIMEOUT
     )
@@ -70,7 +70,7 @@ def test_health_check_accept_content_type_json_200():
 def test_health_check_invalid_parameters_200():
     payload_params = {"invalid_key": "invalid_value", "id": 9999999}
     response = requests.get(
-        API_HEALTH_CHECK_ENDPOINT,
+        ApiEndpoints.health_check(),
         params=payload_params,
         timeout=API_TIMEOUT
     )
@@ -85,7 +85,7 @@ def test_health_check_performance_200():
     for _ in range(TEST_PERFORMANCE_LOOP):
         start_time = time.time()
         response = requests.get(
-            API_HEALTH_CHECK_ENDPOINT,
+            ApiEndpoints.health_check(),
             timeout = API_TIMEOUT
         )
         duration_ms += (time.time() - start_time)
@@ -100,7 +100,7 @@ def test_health_check_performance_200():
 
 def test_health_check_sensitive_information_200():
     response = requests.get(
-        API_HEALTH_CHECK_ENDPOINT,
+        ApiEndpoints.health_check(),
         timeout = API_TIMEOUT
     )
     check.equal(response.status_code, 200, msg=f"Expected 200, but got {response.status_code}")
@@ -151,7 +151,7 @@ def test_health_check_sensitive_information_200():
 def test_health_check_response_header_200():
     custom_headers = {"Accept": "application/json", "Content-Type": "application/json"}
     response = requests.get(
-        API_HEALTH_CHECK_ENDPOINT,
+        ApiEndpoints.health_check(),
         headers=custom_headers,
         timeout=API_TIMEOUT
     )
@@ -174,7 +174,7 @@ def test_health_check_response_header_200():
 
 @pytest.mark.parametrize("http_method", ["POST", "PUT", "PATCH", "DELETE"])
 def test_health_check_reject_invalid_methods_404(http_method):
-    response = requests.request(http_method, API_HEALTH_CHECK_ENDPOINT)
+    response = requests.request(http_method, ApiEndpoints.health_check())
     check.is_in(response.status_code, [400, 404, 405], msg=f"Expected [400, 404, 405] for {http_method}, but got {response.status_code}")
 
 

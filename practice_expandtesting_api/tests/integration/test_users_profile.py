@@ -3,7 +3,7 @@ import requests
 from pytest_check import check
 
 from config.settings import (
-    API_USER_PROFILE_ENDPOINT
+    ApiEndpoints
 )
 
 
@@ -20,7 +20,7 @@ curl -X 'PATCH' \
 
 
 def test_users_get_profile_data_contract_200(manage_context_primary_user_register_login):
-    response = requests.get(API_USER_PROFILE_ENDPOINT, headers=manage_context_primary_user_register_login["headers_login"])
+    response = requests.get(ApiEndpoints.user_profile(), headers=manage_context_primary_user_register_login["headers_login"])
     check.equal(response.status_code, 200, f"Expected 200 OK, got {response.status_code}")
 
     resp_json = response.json()
@@ -63,7 +63,7 @@ def test_users_get_profile_data_contract_200(manage_context_primary_user_registe
 )
 def test_users_get_profile_malformed_token_401(malformed_token, expected_msg):
     headers = {"x-auth-token": malformed_token,"Accept": "application/json"}
-    response = requests.get(API_USER_PROFILE_ENDPOINT, headers=headers)
+    response = requests.get(ApiEndpoints.user_profile(), headers=headers)
 
     assert response.status_code == 401
     assert response.reason == "Unauthorized"
@@ -83,7 +83,7 @@ def test_users_patch_profile_update_name_200(manage_context_primary_user_registe
     new_name = "Updated Tester QATeam"
     new_payload = {"name": new_name}
 
-    response = requests.patch(API_USER_PROFILE_ENDPOINT, headers=manage_context_primary_user_register_login.get("headers_login"), json=new_payload)
+    response = requests.patch(ApiEndpoints.user_profile(), headers=manage_context_primary_user_register_login.get("headers_login"), json=new_payload)
     check.equal(response.status_code, 200, f"Expected 200 OK, but got {response.status_code}")
 
     resp_json = response.json()
@@ -121,7 +121,7 @@ def test_users_patch_profile_update_name_phone_200(manage_context_primary_user_r
     new_phone = "8883697531"
     new_payload = {"name": new_name, "phone": new_phone}
 
-    response = requests.patch(API_USER_PROFILE_ENDPOINT, headers=manage_context_primary_user_register_login.get("headers_login"), json=new_payload)
+    response = requests.patch(ApiEndpoints.user_profile(), headers=manage_context_primary_user_register_login.get("headers_login"), json=new_payload)
     check.equal(response.status_code, 200, f"Expected 200 OK, but got {response.status_code}")
 
     json_data = response.json()
@@ -143,7 +143,7 @@ def test_users_patch_profile_update_name_phone_company_200(manage_context_primar
     new_company = "Dream Tech Product Inc."
     new_payload = {"name": new_name, "phone": new_phone, "company": new_company}
 
-    response = requests.patch(API_USER_PROFILE_ENDPOINT, headers=manage_context_primary_user_register_login["headers_login"], json=new_payload)
+    response = requests.patch(ApiEndpoints.user_profile(), headers=manage_context_primary_user_register_login["headers_login"], json=new_payload)
     check.equal(response.status_code, 200, f"Expected 200 OK, but got {response.status_code}")
 
     json_data = response.json()
@@ -170,7 +170,7 @@ def test_users_patch_profile_update_name_phone_company_200(manage_context_primar
     ]
 )
 def test_users_patch_profile_bad_request_400(scenario_name, invalid_payload, expected_status, manage_context_primary_user_register_login):
-    response = requests.patch(API_USER_PROFILE_ENDPOINT, json=invalid_payload, headers=manage_context_primary_user_register_login["headers_login"])
+    response = requests.patch(ApiEndpoints.user_profile(), json=invalid_payload, headers=manage_context_primary_user_register_login["headers_login"])
 
     assert response.status_code == expected_status, f"Expected {expected_status}, but got {response.status_code}. Scenario '{scenario_name}' failed."
     assert "bad request" in response.reason.lower()
@@ -184,7 +184,7 @@ def test_users_patch_profile_bad_request_400(scenario_name, invalid_payload, exp
 def test_users_profile_reject_invalid_methods_404(http_method):
     response = requests.request(
         http_method,
-        API_USER_PROFILE_ENDPOINT
+        ApiEndpoints.user_profile()
     )
     status = response.status_code
     assert status == 404, f"Expected 404 for {http_method}, but got {status}"

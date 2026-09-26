@@ -4,7 +4,7 @@ import requests
 from pytest_check import check
 
 from config.settings import (
-    API_NOTES_ENDPOINT
+    ApiEndpoints
 )
 
 
@@ -31,7 +31,7 @@ def test_notes_get_all_notes_200(manage_context_user_register_login_post_note):
     note_context = user_note_context.get("note_context")
     note_context_data = note_context.get("note_data")
 
-    response = requests.get(API_NOTES_ENDPOINT, headers=user_context.get("headers_login"))
+    response = requests.get(ApiEndpoints.notes(), headers=user_context.get("headers_login"))
     check.equal(response.status_code, 200, msg=f"Expected 200, but got: {response.status_code}")
 
     resp_json = response.json()
@@ -73,7 +73,7 @@ def test_notes_get_note_by_id_200(manage_context_user_register_login_post_note):
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
     note_context_data = note_context.get("note_data")
-    target_url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
+    target_url = f"{ApiEndpoints.notes()}/{note_context.get('note_id')}"
 
     response = requests.get(target_url, headers=user_context.get("headers_login"))
     check.equal(response.status_code, 200, msg=f"Expected 200, but got: {response.status_code}")
@@ -115,7 +115,7 @@ def test_notes_get_note_by_id_200(manage_context_user_register_login_post_note):
 @pytest.mark.parametrize("path", ["../notes"])
 def test_notes_get_path_traversal_without_notes_200(path, manage_context_primary_user_register_login):
     user_context = manage_context_primary_user_register_login 
-    target_url = f"{API_NOTES_ENDPOINT}/{path}"
+    target_url = f"{ApiEndpoints.notes()}/{path}"
 
     response = requests.get(target_url, headers=user_context.get("headers_login"))
     check.equal(response.status_code, 200)
@@ -132,7 +132,7 @@ def test_notes_get_path_traversal_without_notes_200(path, manage_context_primary
 def test_notes_get_path_traversal_with_notes_200(path, manage_context_user_register_login_post_note):
     user_note_context = manage_context_user_register_login_post_note
     user_context = user_note_context.get("user_context")
-    target_url = f"{API_NOTES_ENDPOINT}/{path}"
+    target_url = f"{ApiEndpoints.notes()}/{path}"
     response = requests.get(target_url, headers=user_context.get("headers_login"))
 
     check.equal(response.status_code, 200)
@@ -146,7 +146,7 @@ def test_notes_get_path_traversal_with_notes_200(path, manage_context_user_regis
 
 def test_notes_get_missing_auth_token_401():
     headers = {"Accept": "application/json"}
-    response = requests.get(API_NOTES_ENDPOINT, headers=headers)
+    response = requests.get(ApiEndpoints.notes(), headers=headers)
     check.equal(response.status_code, 401)
     check.is_in("no authentication token specified in x-auth-token header", response.json().get("message", "").lower())
 
@@ -155,7 +155,7 @@ def test_notes_get_missing_auth_token_401():
 @pytest.mark.parametrize("note_id", ["invalid-note-id", "{id}"])
 def test_notes_get_invalid_note_id_400(note_id, manage_context_primary_user_register_login):
     user_context = manage_context_primary_user_register_login
-    target_url = f"{API_NOTES_ENDPOINT}/{note_id}"
+    target_url = f"{ApiEndpoints.notes()}/{note_id}"
     response = requests.get(target_url, headers=user_context.get("headers_login"))
 
     check.equal(response.status_code, 400)
@@ -167,7 +167,7 @@ def test_notes_get_invalid_note_id_400(note_id, manage_context_primary_user_regi
 def test_notes_get_valid_but_nonexistent_note_id_404(manage_context_primary_user_register_login):
     user_context = manage_context_primary_user_register_login
     non_existent_hex_id = uuid.uuid4().hex[:24]
-    target_url = f"{API_NOTES_ENDPOINT}/{non_existent_hex_id}"
+    target_url = f"{ApiEndpoints.notes()}/{non_existent_hex_id}"
     response = requests.get(target_url, headers=user_context.get("headers_login"))
     check.equal(response.status_code, 404)
     check.is_false(response.json().get("success"))
@@ -178,7 +178,7 @@ def test_notes_get_valid_but_nonexistent_note_id_404(manage_context_primary_user
 @pytest.mark.parametrize("endpoint_path", ["/getnode/id"])
 def test_notes_get_invalid_path_404(endpoint_path, manage_context_primary_user_register_login):
     user_context = manage_context_primary_user_register_login
-    target_url = f"{API_NOTES_ENDPOINT}{endpoint_path}"
+    target_url = f"{ApiEndpoints.notes()}{endpoint_path}"
     response = requests.get(target_url, headers=user_context.get("headers_login"))
 
     check.equal(response.status_code, 404)
@@ -195,7 +195,7 @@ def test_notes_get_invalid_path_404(endpoint_path, manage_context_primary_user_r
 ])
 def test_notes_get_path_parameter_anomalies_400(corrupt_id, manage_context_primary_user_register_login):
     user_context = manage_context_primary_user_register_login
-    target_url = f"{API_NOTES_ENDPOINT}/{corrupt_id}"
+    target_url = f"{ApiEndpoints.notes()}/{corrupt_id}"
     response = requests.get(target_url, headers=user_context.get("headers_login"))
     check.equal(response.status_code, 400)
     check.not_equal(response.status_code, 500)
@@ -209,7 +209,7 @@ def test_notes_get_path_parameter_anomalies_400(corrupt_id, manage_context_prima
 ])
 def test_notes_get_path_anomalies_404(corrupt_path, manage_context_primary_user_register_login):
     user_context = manage_context_primary_user_register_login
-    target_url = f"{API_NOTES_ENDPOINT}/{corrupt_path}"
+    target_url = f"{ApiEndpoints.notes()}/{corrupt_path}"
     response = requests.get(target_url, headers=user_context.get("headers_login"))
     check.equal(response.status_code, 404)
     check.not_equal(response.status_code, 500)
@@ -222,7 +222,7 @@ def test_notes_get_security_cross_tenant_isolation_breach_404(manage_context_sec
     p_user_note_context = manage_context_user_register_login_post_note
     p_note_context = p_user_note_context.get("note_context")
 
-    target_url = f"{API_NOTES_ENDPOINT}/{p_note_context.get('note_id')}"
+    target_url = f"{ApiEndpoints.notes()}/{p_note_context.get('note_id')}"
 
     # Secondary User attempts to access Primary User's generated resource note ID
     response = requests.get(target_url, headers=s_user_context.get("headers_login"))

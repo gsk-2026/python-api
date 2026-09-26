@@ -3,8 +3,8 @@ import requests
 from pytest_check import check
 
 from config.settings import (
-    API_USER_LOGIN_ENDPOINT,
-    UserTestStep
+    ApiEndpoints,
+    UserTestSteps
 )
 
 
@@ -25,11 +25,11 @@ def test_users_login_success_200(manage_context_primary_user_register):
     user_payload = context.get("user_payload")
     user_credential = {"email": user_payload["email"], "password": user_payload["password"]}
 
-    response = requests.post(API_USER_LOGIN_ENDPOINT, headers={"Content-Type": "application/json"}, json=user_credential)
+    response = requests.post(ApiEndpoints.user_login(), headers={"Content-Type": "application/json"}, json=user_credential)
     check.equal(response.status_code, 200, f"Expected 200, got {response.status_code}")
     manage_context_primary_user_register["token"] = response.json()["data"]["token"]
     manage_context_primary_user_register["headers_login"] = {**context["headers_default"], "x-auth-token": response.json()["data"]["token"]}
-    manage_context_primary_user_register["user_test_step"] = UserTestStep.USER_LOGIN
+    manage_context_primary_user_register["user_test_step"] = UserTestSteps.USER_LOGIN
     manage_context_primary_user_register["response"] = response
 
     resp_json = response.json()
@@ -61,7 +61,7 @@ def test_users_login_invalid_password_400(manage_context_primary_user_register):
     context = manage_context_primary_user_register
     user_payload = context.get("user_payload")
     response = requests.post(
-        API_USER_LOGIN_ENDPOINT,
+        ApiEndpoints.user_login(),
         headers={"Content-Type": "application/json"},
         data={"email": user_payload["email"], "password": "WrongPassword!"}
     )
@@ -75,7 +75,7 @@ def test_users_login_invalid_email_400(manage_context_primary_user_register):
     context = manage_context_primary_user_register
     user_payload = context.get("user_payload")
     response = requests.post(
-        API_USER_LOGIN_ENDPOINT,
+        ApiEndpoints.user_login(),
         headers={"Content-Type": "application/json"},
         data={"email": "InvalidEmail@qateam.com", "password": user_payload["password"]}
     )
@@ -93,7 +93,7 @@ def test_users_login_missing_required_fields_400(missing_field, manage_context_p
     payload = user_payload.copy()
     payload.pop(missing_field)
 
-    response = requests.post(API_USER_LOGIN_ENDPOINT, headers={"Content-Type": "application/json"}, data=payload)
+    response = requests.post(ApiEndpoints.user_login(), headers={"Content-Type": "application/json"}, data=payload)
     check.equal(response.status_code, 400)
     check.is_false(response.json()["success"])
 
@@ -109,7 +109,7 @@ def test_users_login_invalid_email_format_400(invalid_email, manage_context_prim
     context = manage_context_primary_user_register
     user_payload = context.get("user_payload")
     payload = {"email": invalid_email,"password": user_payload["password"]}
-    response = requests.post(API_USER_LOGIN_ENDPOINT, headers={"Content-Type": "application/json"}, data=payload)
+    response = requests.post(ApiEndpoints.user_login(), headers={"Content-Type": "application/json"}, data=payload)
     check.equal(response.status_code, 400)
     check.is_false(response.json()["success"])
 
@@ -118,7 +118,7 @@ def test_users_login_empty_password_400(manage_context_primary_user_register):
     context = manage_context_primary_user_register
     user_payload = context.get("user_payload")
     payload = {"email": user_payload["email"], "password": ""}
-    response = requests.post(API_USER_LOGIN_ENDPOINT, headers={"Content-Type": "application/json"}, data=payload)
+    response = requests.post(ApiEndpoints.user_login(), headers={"Content-Type": "application/json"}, data=payload)
     check.equal(response.status_code, 400)
     check.is_false(response.json()["success"])
 
@@ -128,11 +128,11 @@ def test_users_login_payload_json_200(manage_context_primary_user_register):
     context = manage_context_primary_user_register
     user_payload = context.get("user_payload")
     headers = { "Content-Type": "application/json", "Accept": "application/json"}
-    response = requests.post(API_USER_LOGIN_ENDPOINT, headers=headers, json=user_payload )
+    response = requests.post(ApiEndpoints.user_login(), headers=headers, json=user_payload )
     check.equal(response.status_code, 200)
     manage_context_primary_user_register["token"] = response.json()["data"]["token"]
     manage_context_primary_user_register["headers_login"] = {**context["headers_default"], "x-auth-token": response.json()["data"]["token"]}
-    manage_context_primary_user_register["user_test_step"] = UserTestStep.USER_LOGIN
+    manage_context_primary_user_register["user_test_step"] = UserTestSteps.USER_LOGIN
     manage_context_primary_user_register["response"] = response
 
 
@@ -141,7 +141,7 @@ def test_users_login_payload_data_400(manage_context_primary_user_register):
     context = manage_context_primary_user_register
     user_payload = context.get("user_payload")
     headers = {"Content-Type": "application/json", "Accept": "application/json"}
-    response = requests.post(API_USER_LOGIN_ENDPOINT, headers=headers, data=user_payload)
+    response = requests.post(ApiEndpoints.user_login(), headers=headers, data=user_payload)
     check.equal(response.status_code, 400)
 
 
@@ -150,14 +150,14 @@ def test_users_login_content_type_text_plain_400(manage_context_primary_user_reg
     context = manage_context_primary_user_register
     user_payload = context.get("user_payload")
     bad_headers = {"Content-Type": "text/plain", "Accept": "application/json" }
-    response = requests.post(API_USER_LOGIN_ENDPOINT, headers=bad_headers, json=user_payload)
+    response = requests.post(ApiEndpoints.user_login(), headers=bad_headers, json=user_payload)
     check.equal(response.status_code, 400)
 
 
 
 def test_users_login_unregistered_401():
     response = requests.post(
-        API_USER_LOGIN_ENDPOINT,
+        ApiEndpoints.user_login(),
         headers={"Content-Type": "application/json"},
         json={"email": "InvalidEmail@qateam.com", "password": "InvalidUserName"}
     )
@@ -172,7 +172,7 @@ def test_users_login_unregistered_401():
 def test_users_login_reject_invalid_methods_404(http_method):
     response = requests.request(
         http_method,
-        API_USER_LOGIN_ENDPOINT
+        ApiEndpoints.user_login()
     )
     status = response.status_code
     check.is_in(status, [400, 404, 405], f"Expected [400, 404, 405] for {http_method}, but got {status}"

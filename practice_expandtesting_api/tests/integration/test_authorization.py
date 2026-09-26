@@ -3,17 +3,17 @@ import requests
 from pytest_check import check
 
 from config.settings import (
-    API_BASE_URL,
-    UserTestStep
+    ApiEndpoints,
+    UserTestSteps
 )
 
 
 def test_auth_positive_valid_token_200(manage_context_primary_user_register_login):
     user_payload = manage_context_primary_user_register_login
-    response = requests.get(API_BASE_URL, headers=user_payload.get("headers_login"))
+    response = requests.get(ApiEndpoints.base_url(), headers=user_payload.get("headers_login"))
 
     check.equal(response.status_code, 200, msg=f"Expected 200, but got {response.status_code}")
-    manage_context_primary_user_register_login["user_test_step"] = UserTestStep.ACCESS_GRANTED
+    manage_context_primary_user_register_login["user_test_step"] = UserTestSteps.ACCESS_GRANTED
     manage_context_primary_user_register_login["response"] = response
 
     response_data = response.json()
@@ -30,9 +30,9 @@ def test_auth_positive_valid_token_200(manage_context_primary_user_register_logi
 
 def test_health_check_response_header_200(manage_context_primary_user_register_login):
     user_context = manage_context_primary_user_register_login
-    response = requests.get(API_BASE_URL, headers=user_context.get("headers_login"))
+    response = requests.get(ApiEndpoints.base_url(), headers=user_context.get("headers_login"))
     check.equal(response.status_code, 200, msg=f"Expected 200, but got {response.status_code}")
-    manage_context_primary_user_register_login["user_test_step"] = UserTestStep.ACCESS_GRANTED
+    manage_context_primary_user_register_login["user_test_step"] = UserTestSteps.ACCESS_GRANTED
     manage_context_primary_user_register_login["response"] = response
 
     resp_json = response.json()
@@ -51,14 +51,14 @@ def test_health_check_response_header_200(manage_context_primary_user_register_l
 
 
 def test_auth_negative_with_no_token_specified_200():
-    response = requests.get(API_BASE_URL, headers={"Authorization": "Bearer invalid-token", "Accept": "application/json"})
+    response = requests.get(ApiEndpoints.base_url(), headers={"Authorization": "Bearer invalid-token", "Accept": "application/json"})
     check.equal(response.status_code, 200, msg=f"Expected 401, but got {response.status_code}")
     check.is_true(response.json().get("success"), msg=f"Expected success False, but got {response.json().get('success')}")
 
 
 
 def test_auth_negative_missing_token_200():
-    response = requests.get(API_BASE_URL, headers={"Accept": "application/json"})
+    response = requests.get(ApiEndpoints.base_url(), headers={"Accept": "application/json"})
 
     check.equal(response.status_code, 200, msg=f"Expected 200, but got {response.status_code}")
     response_data = response.json()
@@ -74,7 +74,7 @@ def test_auth_negative_missing_token_200():
     "omg" * 1000  # Boundary check: extremely long string
 ])
 def test_auth_negative_invalid_tokens_200(invalid_token):
-    response = requests.get(API_BASE_URL, headers={"x-auth-token": invalid_token, "Accept": "application/json"})
+    response = requests.get(ApiEndpoints.base_url(), headers={"x-auth-token": invalid_token, "Accept": "application/json"})
 
     check.equal(response.status_code, 200, msg=f"Expected 200, but got {response.status_code}")
     response_data = response.json()
@@ -91,7 +91,7 @@ def test_auth_negative_invalid_tokens_200(invalid_token):
     "<script>alert('hack')</script>" # XSS payload attempt inside auth header
 ])
 def test_auth_edge_and_boundary_injection_tokens_200(edge_case_token):
-    response = requests.get(API_BASE_URL, headers={"x-auth-token": edge_case_token, "Accept": "application/json"})
+    response = requests.get(ApiEndpoints.base_url(), headers={"x-auth-token": edge_case_token, "Accept": "application/json"})
 
     check.equal(response.status_code, 200, msg=f"Expected 200, but got {response.status_code}")
     response_data = response.json()

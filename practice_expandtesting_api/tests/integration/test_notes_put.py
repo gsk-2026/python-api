@@ -1,7 +1,7 @@
 import pytest
 import requests
 from pytest_check import check
-from config.settings import API_NOTES_ENDPOINT
+from config.settings import ApiEndpoints
 
 
 """
@@ -20,7 +20,7 @@ def test_notes_put_success_200(manage_context_user_register_login_post_note):
     user_note_context = manage_context_user_register_login_post_note
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
-    put_url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
+    put_url = f"{ApiEndpoints.notes()}/{note_context.get('note_id')}"
     update_payload = {
         "title": "Updated : QATester Test Task : Note Title",
         "description": "Updated : Note content description",
@@ -70,7 +70,7 @@ def test_notes_put_missing_accept_header_200(manage_context_user_register_login_
     user_note_context = manage_context_user_register_login_post_note
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
-    put_url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
+    put_url = f"{ApiEndpoints.notes()}/{note_context.get('note_id')}"
     update_payload = {
         "title": "Updated : QATester Test Task : Note Title",
         "description": "Updated : Note content description",
@@ -122,7 +122,7 @@ def test_notes_put_missing_content_type_header_200(manage_context_user_register_
     user_note_context = manage_context_user_register_login_post_note
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
-    put_url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
+    put_url = f"{ApiEndpoints.notes()}/{note_context.get('note_id')}"
     update_payload = {
         "title": "Updated : QATester Test Task : Note Title",
         "description": "Updated : Note content description",
@@ -175,7 +175,7 @@ def test_notes_put_missing_auth_token_header_401(manage_context_user_register_lo
     user_note_context = manage_context_user_register_login_post_note
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
-    put_url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
+    put_url = f"{ApiEndpoints.notes()}/{note_context.get('note_id')}"
     update_payload = {
         "title": "Updated : QATester Test Task : Note Title",
         "description": "Updated : Note content description",
@@ -199,7 +199,7 @@ def test_notes_put_invalid_auth_token_header_401(auth_token, manage_context_user
     user_note_context = manage_context_user_register_login_post_note
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
-    put_url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
+    put_url = f"{ApiEndpoints.notes()}/{note_context.get('note_id')}"
     update_payload = {
         "title": "Updated : QATester Test Task : Note Title",
         "description": "Updated : Note content description",
@@ -223,7 +223,7 @@ def test_notes_put_expired_auth_token_header_404(expired_auth_token, manage_cont
     user_note_context = manage_context_user_register_login_post_note
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
-    put_url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
+    put_url = f"{ApiEndpoints.notes()}/{note_context.get('note_id')}"
     update_payload = {
         "title": "Updated : QATester Test Task : Note Title",
         "description": "Updated : Note content description",
@@ -251,7 +251,7 @@ def test_notes_put_invalid_title_200(invalid_title, manage_context_user_register
     user_note_context = manage_context_user_register_login_post_note
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
-    put_url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
+    put_url = f"{ApiEndpoints.notes()}/{note_context.get('note_id')}"
     update_payload = {
         "title": f"{invalid_title}",            # Expects String type
         "description": "Updated : Note content description",
@@ -280,7 +280,7 @@ def test_notes_put_invalid_category_enum_400( invalid_category, manage_context_u
     user_note_context = manage_context_user_register_login_post_note
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
-    put_url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
+    put_url = f"{ApiEndpoints.notes()}/{note_context.get('note_id')}"
     bad_payload = {
         "title": "Updated : QATester Test Task : Note Title",
         "description": "Updated : Note content description",
@@ -301,7 +301,7 @@ def test_notes_put_invalid_completed_enum_400(invalid_completed, manage_context_
     user_note_context = manage_context_user_register_login_post_note
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
-    put_url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
+    put_url = f"{ApiEndpoints.notes()}/{note_context.get('note_id')}"
     bad_payload = {
         "title": "Updated : QATester Test Task : Note Title",
         "description": "Updated : Note content description",
@@ -322,7 +322,7 @@ def test_notes_put_valid_completed_enum_200(valid_completed, manage_context_user
     user_note_context = manage_context_user_register_login_post_note
     user_context = user_note_context.get("user_context")
     note_context = user_note_context.get("note_context")
-    put_url = f"{API_NOTES_ENDPOINT}/{note_context.get('note_id')}"
+    put_url = f"{ApiEndpoints.notes()}/{note_context.get('note_id')}"
     update_payload = {
         "title": "Updated : QATester Test Task : Note Title",
         "description": "Updated : Note content description",
@@ -354,7 +354,7 @@ def test_notes_put_valid_completed_enum_200(valid_completed, manage_context_user
 ])
 def test_notes_put_non_existent_id_400(fake_id, manage_context_primary_user_register_login):
     user_context = manage_context_primary_user_register_login
-    put_url = f"{API_NOTES_ENDPOINT}/{fake_id}"
+    put_url = f"{ApiEndpoints.notes()}/{fake_id}"
     update_payload = {
         "title": "Updated : QATester Test Task : Note Title",
         "description": "Updated : Note content description",
@@ -374,7 +374,7 @@ def test_notes_put_non_existent_id_400(fake_id, manage_context_primary_user_regi
 ])
 def test_notes_put_deleted_id_404(fake_id, manage_context_primary_user_register_login):
     user_context = manage_context_primary_user_register_login
-    put_url = f"{API_NOTES_ENDPOINT}/{fake_id}"
+    put_url = f"{ApiEndpoints.notes()}/{fake_id}"
     update_payload = {
         "title": "Updated : QATester Test Task : Note Title",
         "description": "Updated : Note content description",

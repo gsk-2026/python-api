@@ -3,9 +3,8 @@ import requests
 from pytest_check import check
 
 from config.settings import (
-    API_BASE_URL,
-    API_USER_REGISTER_ENDPOINT,
-    UserTestStep,
+    ApiEndpoints,
+    UserTestSteps,
     TEST_SLEEP_IN_SECOND
 )
 
@@ -26,7 +25,7 @@ def test_users_register_success_201(manage_context_primary_user_register):
     user_payload = context.get("user_payload")
     response = context.get("response")
     check.equal(response.status_code, 201, f"Expected 201, but got {response.status_code}")
-    check.equal(manage_context_primary_user_register["user_test_step"], UserTestStep.USER_REGISTRATION)
+    check.equal(manage_context_primary_user_register["user_test_step"], UserTestSteps.USER_REGISTRATION)
 
     resp_json = response.json()
     check.is_instance(resp_json, dict, msg=f"Expected resp_json to be a JSON object, but got as {type(resp_json).__name__}.")
@@ -88,7 +87,7 @@ def test_users_register_duplicate_409(manage_context_primary_user_register):
     context = manage_context_primary_user_register
     user_payload = context.get("user_payload")
 
-    new_resp = requests.post(API_USER_REGISTER_ENDPOINT, headers={"Content-Type": "application/json"}, json=user_payload)
+    new_resp = requests.post(ApiEndpoints.user_register(), headers={"Content-Type": "application/json"}, json=user_payload)
     check.equal(new_resp.status_code, 409, f"Expected 409, but got {new_resp.status_code}")
     check.is_false(new_resp.json()["success"], f"Expected 'False'', but got {new_resp.json()['success']}")
     check.is_in("already exists", new_resp.json()["message"].lower(), f"Expected 'already exists', but got {new_resp.json()['message']}")
@@ -102,7 +101,7 @@ def test_users_register_missing_required_fields_400(missing_field, manage_contex
     new_user_payload = user_payload.copy()
     del new_user_payload[missing_field]
 
-    new_resp = requests.post(API_USER_REGISTER_ENDPOINT, headers={"Content-Type": "application/json"}, json=new_user_payload)
+    new_resp = requests.post(ApiEndpoints.user_register(), headers={"Content-Type": "application/json"}, json=new_user_payload)
     check.equal(new_resp.status_code, 400, f"Expected 400, but got {new_resp.status_code}")
 
     resp_data = new_resp.json()
@@ -118,7 +117,7 @@ def test_users_register_empty_required_fields_400(empty_field, manage_context_pr
     new_user_payload = user_payload.copy()
     new_user_payload[empty_field] = "   "
 
-    new_res = requests.post(API_USER_REGISTER_ENDPOINT, headers={"Content-Type": "application/json"}, json=new_user_payload)
+    new_res = requests.post(ApiEndpoints.user_register(), headers={"Content-Type": "application/json"}, json=new_user_payload)
     check.equal(new_res.status_code, 400, f"Expected 400, but got {new_res.status_code}")
 
     res_data = new_res.json()
@@ -141,7 +140,7 @@ def test_users_register_length_boundary_400(empty_field, manage_context_primary_
     elif empty_field == "password":
         new_user_payload[empty_field] = "b"
 
-    new_res = requests.post(API_USER_REGISTER_ENDPOINT, headers={"Content-Type": "application/json"}, json=new_user_payload)
+    new_res = requests.post(ApiEndpoints.user_register(), headers={"Content-Type": "application/json"}, json=new_user_payload)
     check.equal(new_res.status_code, 400, f"Expected 400, but got {new_res.status_code}")
 
     resp_data = new_res.json()
@@ -164,14 +163,14 @@ def test_users_register_invalid_email_format_400(malformed_email):
         "email": malformed_email,
         "password": "QATesterPSWD123!"
     }
-    response = requests.post(API_USER_REGISTER_ENDPOINT, headers=headers, json=user_payload)
+    response = requests.post(ApiEndpoints.user_register(), headers=headers, json=user_payload)
     check.equal(response.status_code, 400, f"Expected 400, but got {response.status_code}")
     check.is_false(response.json()["success"], f"Expected 'False', but got {response.json()['success']}")
 
 
 
 def test_users_register_missing_content_type_header_400(manage_context_primary_user_register):
-    response = requests.post(API_USER_REGISTER_ENDPOINT, data=str(manage_context_primary_user_register))
+    response = requests.post(ApiEndpoints.user_register(), data=str(manage_context_primary_user_register))
     check.is_in(response.status_code, [400, 415])
     check.is_false(response.json()["success"], f"Expected 'False', but got {response.json()['success']}")
 
@@ -179,7 +178,7 @@ def test_users_register_missing_content_type_header_400(manage_context_primary_u
 
 @pytest.mark.parametrize("http_method", ["GET", "PUT", "PATCH", "DELETE"])
 def test_users_register_reject_invalid_methods_404(http_method):
-    response = requests.request(http_method, API_USER_REGISTER_ENDPOINT )
+    response = requests.request(http_method, ApiEndpoints.user_register() )
     status = response.status_code
     check.is_in(status, [400, 404, 405], f"Expected [400, 404, 405] for {http_method}, but got {status}")
 
@@ -191,6 +190,6 @@ def test_users_register_invalid_path_404():
         "email": f"qatester_temp1@qateam.com",
         "password": "QATesterPSWD123!"
     }
-    response = requests.post(f"{API_BASE_URL}/users/registration", json=new_user_payload, timeout=TEST_SLEEP_IN_SECOND )
+    response = requests.post(f"{ApiEndpoints.base_url()}/users/registration", json=new_user_payload, timeout=TEST_SLEEP_IN_SECOND )
     check.equal(response.status_code, 404, f"Expected 404, but got {response.status_code}")
     check.is_in("Page Not Found", response.text, msg=f"Expected 'Page Not Found' in response, but got {response.text}")

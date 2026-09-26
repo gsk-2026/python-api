@@ -4,9 +4,8 @@ import requests
 from pytest_check import check
 
 from config.settings import (
-    API_USER_LOGIN_ENDPOINT,
-    API_USER_DELETE_ACCOUNT_ENDPOINT,
-    UserTestStep,
+    ApiEndpoints,
+    UserTestSteps,
     TEST_SLEEP_IN_SECOND
 )
 
@@ -29,8 +28,8 @@ curl -X 'DELETE' \
 
 def test_users_delete_acct_normal_positive_200(manage_context_primary_user_register_login):
     headers = manage_context_primary_user_register_login.get("headers_login")
-    response = requests.delete(API_USER_DELETE_ACCOUNT_ENDPOINT, headers=headers)
-    manage_context_primary_user_register_login["user_test_step"] = UserTestStep.ACCOUNT_DELETION
+    response = requests.delete(ApiEndpoints.user_delete_account(), headers=headers)
+    manage_context_primary_user_register_login["user_test_step"] = UserTestSteps.ACCOUNT_DELETION
     manage_context_primary_user_register_login["response"] = response
 
     resp_json = response.json()
@@ -48,9 +47,9 @@ def test_users_delete_acct_normal_positive_200(manage_context_primary_user_regis
 def test_users_delete_acct_missing_header_accept_200(manage_context_primary_user_register_login):
     headers = manage_context_primary_user_register_login.get("headers_login").copy()
     del headers["Accept"]
-    response = requests.delete(API_USER_DELETE_ACCOUNT_ENDPOINT, headers=headers)
+    response = requests.delete(ApiEndpoints.user_delete_account(), headers=headers)
     check.equal(response.status_code, 200, msg=f"Expected 200, but got {response.status_code}")
-    manage_context_primary_user_register_login["user_test_step"] = UserTestStep.ACCOUNT_DELETION
+    manage_context_primary_user_register_login["user_test_step"] = UserTestSteps.ACCOUNT_DELETION
     manage_context_primary_user_register_login["response"] = response
 
     resp_json = response.json()
@@ -65,7 +64,7 @@ def test_users_delete_acct_missing_header_accept_200(manage_context_primary_user
 
 
 def test_users_delete_acct_missing_token_401():
-    response = requests.delete(API_USER_DELETE_ACCOUNT_ENDPOINT, headers={"Accept": "application/json"})
+    response = requests.delete(ApiEndpoints.user_delete_account(), headers={"Accept": "application/json"})
     check.equal(response.status_code, 401)
     response_data = response.json()
     check.equal(response_data.get("status"), 401)
@@ -78,7 +77,7 @@ def test_users_delete_acct_missing_token_401():
     ""
 ])
 def test_users_delete_acct_blank_token_401(blank_token):
-    response = requests.delete(API_USER_DELETE_ACCOUNT_ENDPOINT, headers={"x-auth-token": blank_token, "Accept": "application/json"})
+    response = requests.delete(ApiEndpoints.user_delete_account(), headers={"x-auth-token": blank_token, "Accept": "application/json"})
     check.equal(response.status_code, 401)
 
     response_data = response.json()
@@ -95,7 +94,7 @@ def test_users_delete_acct_blank_token_401(blank_token):
     "OMG!" * 256
 ])
 def test_users_delete_acct_malformed_token_401(malformed_token):
-    response = requests.delete(API_USER_DELETE_ACCOUNT_ENDPOINT, headers={"x-auth-token": malformed_token, "Accept": "application/json"})
+    response = requests.delete(ApiEndpoints.user_delete_account(), headers={"x-auth-token": malformed_token, "Accept": "application/json"})
     check.equal(response.status_code, 401)
 
     response_data = response.json()
@@ -108,9 +107,9 @@ def test_users_delete_acct_malformed_token_401(malformed_token):
 
 def test_users_delete_acct_duplicate_deletion_200_401(manage_context_primary_user_register_login):
     headers = manage_context_primary_user_register_login.get("headers_login")
-    first_resp = requests.delete(API_USER_DELETE_ACCOUNT_ENDPOINT, headers=headers)
+    first_resp = requests.delete(ApiEndpoints.user_delete_account(), headers=headers)
     check.equal(first_resp.status_code, 200)
-    manage_context_primary_user_register_login["user_test_step"] = UserTestStep.ACCOUNT_DELETION
+    manage_context_primary_user_register_login["user_test_step"] = UserTestSteps.ACCOUNT_DELETION
     manage_context_primary_user_register_login["response"] = first_resp
 
     first_data = first_resp.json()
@@ -118,7 +117,7 @@ def test_users_delete_acct_duplicate_deletion_200_401(manage_context_primary_use
     check.is_true(first_data.get("success"))
     check.is_in("successful", first_data.get("message").lower())
 
-    second_resp = requests.delete(API_USER_DELETE_ACCOUNT_ENDPOINT, headers=headers)
+    second_resp = requests.delete(ApiEndpoints.user_delete_account(), headers=headers)
     check.equal(second_resp.status_code, 401)
     second_data = second_resp.json()
     check.equal(second_data.get("status"), 401)
@@ -129,9 +128,9 @@ def test_users_delete_acct_duplicate_deletion_200_401(manage_context_primary_use
 
 def test_users_delete_acct_deletion_then_login_401(manage_context_primary_user_register_login):
     headers = manage_context_primary_user_register_login.get("headers_login")
-    delete_resp = requests.delete(API_USER_DELETE_ACCOUNT_ENDPOINT, headers=headers)
+    delete_resp = requests.delete(ApiEndpoints.user_delete_account(), headers=headers)
     check.equal(delete_resp.status_code, 200)
-    manage_context_primary_user_register_login["user_test_step"] = UserTestStep.ACCOUNT_DELETION
+    manage_context_primary_user_register_login["user_test_step"] = UserTestSteps.ACCOUNT_DELETION
 
     delete_data = delete_resp.json()
     check.equal(delete_data.get("status"), 200)
@@ -140,7 +139,7 @@ def test_users_delete_acct_deletion_then_login_401(manage_context_primary_user_r
 
     time.sleep(TEST_SLEEP_IN_SECOND)
 
-    login_resp = requests.post(API_USER_LOGIN_ENDPOINT, json=manage_context_primary_user_register_login["credentials"])
+    login_resp = requests.post(ApiEndpoints.user_login(), json=manage_context_primary_user_register_login["credentials"])
     check.equal(login_resp.status_code, 401)
 
     login_data = login_resp.json()
@@ -155,7 +154,7 @@ def test_users_delete_acct_deletion_then_login_401(manage_context_primary_user_r
 def test_users_delete_acct_reject_invalid_methods(http_method):
     response = requests.request(
         http_method,
-        API_USER_DELETE_ACCOUNT_ENDPOINT
+        ApiEndpoints.user_delete_account()
     )
     status = response.status_code
     check.is_in(status, [400, 404, 405], f"Expected [400, 404, 405] for {http_method}, but got {status}")
@@ -164,7 +163,7 @@ def test_users_delete_acct_reject_invalid_methods(http_method):
 
 def test_users_delete_acct_page_not_found_404(manage_context_primary_user_register_login):
     headers = manage_context_primary_user_register_login.get("headers_login")
-    del_url = API_USER_DELETE_ACCOUNT_ENDPOINT.replace("-","")
+    del_url = ApiEndpoints.user_delete_account().replace("-","")
     response = requests.delete(del_url, headers=headers)
 
     check.equal(response.status_code, 404)

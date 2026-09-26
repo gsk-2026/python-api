@@ -3,8 +3,8 @@ import requests
 from pytest_check import check
 
 from config.settings import (
-    API_USER_LOGOUT_ENDPOINT,
-    API_NOTES_ENDPOINT, UserTestStep
+    ApiEndpoints,
+    UserTestSteps
 )
 
 
@@ -21,9 +21,9 @@ curl -X 'DELETE' \
 
 def test_users_logout_positive_logout_200(manage_context_primary_user_register_login):
     user_context = manage_context_primary_user_register_login
-    response = requests.delete(API_USER_LOGOUT_ENDPOINT, headers=user_context.get("headers_login"))
+    response = requests.delete(ApiEndpoints.user_logout(), headers=user_context.get("headers_login"))
     check.equal(response.status_code, 200, msg=f"Expected 200, but got {response.status_code}")
-    manage_context_primary_user_register_login["user_test_step"] = UserTestStep.USER_LOGOUT
+    manage_context_primary_user_register_login["user_test_step"] = UserTestSteps.USER_LOGOUT
     manage_context_primary_user_register_login["response"] = response
 
     resp_json = response.json()
@@ -41,9 +41,9 @@ def test_users_logout_missing_accept_header_200(manage_context_primary_user_regi
     user_context = manage_context_primary_user_register_login
     headers = user_context["headers_login"].copy()
     del headers["Accept"]
-    response = requests.delete(API_USER_LOGOUT_ENDPOINT, headers=headers)
+    response = requests.delete(ApiEndpoints.user_logout(), headers=headers)
     check.equal(response.status_code, 200, msg=f"Expected 200, but got {response.status_code}")
-    manage_context_primary_user_register_login["user_test_step"] = UserTestStep.USER_LOGOUT
+    manage_context_primary_user_register_login["user_test_step"] = UserTestSteps.USER_LOGOUT
     manage_context_primary_user_register_login["response"] = response
 
     resp_data = response.json()
@@ -57,12 +57,12 @@ def test_users_logout_missing_accept_header_200(manage_context_primary_user_regi
 def test_users_logout_double_logout_200_401(manage_context_primary_user_register_login):
     user_context = manage_context_primary_user_register_login
 
-    resp_1 = requests.delete(API_USER_LOGOUT_ENDPOINT, headers=user_context.get("headers_login"))
+    resp_1 = requests.delete(ApiEndpoints.user_logout(), headers=user_context.get("headers_login"))
     check.equal(resp_1.status_code, 200, msg=f"Expected 200 OK, but got {resp_1.status_code}")
-    manage_context_primary_user_register_login["user_test_step"] = UserTestStep.USER_LOGOUT
+    manage_context_primary_user_register_login["user_test_step"] = UserTestSteps.USER_LOGOUT
     manage_context_primary_user_register_login["response"] = resp_1
 
-    resp_2 = requests.delete(API_USER_LOGOUT_ENDPOINT, headers=user_context.get("headers_login"))
+    resp_2 = requests.delete(ApiEndpoints.user_logout(), headers=user_context.get("headers_login"))
     check.equal(resp_2.status_code, 401, msg=f"Expected 401 Unauthorized, but got {resp_2.status_code}")
 
 
@@ -70,12 +70,12 @@ def test_users_logout_double_logout_200_401(manage_context_primary_user_register
 def test_users_logout_data_integrity_post_logout_401(manage_context_primary_user_register_login):
     user_context = manage_context_primary_user_register_login
 
-    logout_resp = requests.delete(API_USER_LOGOUT_ENDPOINT, headers=user_context.get("headers_login"))
+    logout_resp = requests.delete(ApiEndpoints.user_logout(), headers=user_context.get("headers_login"))
     check.equal(logout_resp.status_code, 200, msg=f"Expected 200 OK, but got {logout_resp.status_code}")
-    manage_context_primary_user_register_login["user_test_step"] = UserTestStep.USER_LOGOUT
+    manage_context_primary_user_register_login["user_test_step"] = UserTestSteps.USER_LOGOUT
     manage_context_primary_user_register_login["response"] = logout_resp
 
-    notes_resp = requests.get(API_NOTES_ENDPOINT, headers=user_context.get("headers_login"))
+    notes_resp = requests.get(ApiEndpoints.notes(), headers=user_context.get("headers_login"))
     check.equal(notes_resp.status_code, 401, msg=f"Expected 401 Unauthorized, but got {notes_resp.status_code}")
     resp_data = notes_resp.json()
     check.is_in("access token is not valid or has expired", resp_data.get("message").lower(), msg=f"Expected 'access token is not valid or has expired' in message, but got {resp_data.get('message')}")
@@ -84,7 +84,7 @@ def test_users_logout_data_integrity_post_logout_401(manage_context_primary_user
 
 def test_users_logout_missing_token_401():
     headers = {"Accept": "application/json"}
-    response = requests.delete(API_USER_LOGOUT_ENDPOINT, headers=headers)
+    response = requests.delete(ApiEndpoints.user_logout(), headers=headers)
 
     assert response.status_code == 401
     resp_data = response.json()
@@ -104,7 +104,7 @@ def test_users_logout_missing_token_401():
 )
 def test_users_logout_malformed_token_401(malformed_token, expected_msg):
     headers = {"x-auth-token": malformed_token, "Accept": "application/json"}
-    response = requests.delete(API_USER_LOGOUT_ENDPOINT, headers=headers)
+    response = requests.delete(ApiEndpoints.user_logout(), headers=headers)
 
     assert response.status_code == 401
     resp_data = response.json()
@@ -116,7 +116,7 @@ def test_users_logout_malformed_token_401(malformed_token, expected_msg):
 
 @pytest.mark.parametrize("http_method", ["GET", "POST", "PUT", "PATCH"])
 def test_users_logout_reject_invalid_methods_404(http_method):
-    response = requests.request(http_method, API_USER_LOGOUT_ENDPOINT)
+    response = requests.request(http_method, ApiEndpoints.user_logout())
     status = response.status_code
     assert status in [400, 404, 405], f"Expected [400, 404, 405] for {http_method}, but got {status}"
 

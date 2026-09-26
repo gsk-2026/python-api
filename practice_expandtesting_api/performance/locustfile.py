@@ -1,6 +1,6 @@
 import uuid
 from locust import between, task, HttpUser, SequentialTaskSet, User
-from config.settings import TEST_DEFAULT_HEADERS, API_BASE_URL
+from config.settings import TEST_DEFAULT_HEADERS, ApiEndpoints
 
 
 
@@ -255,6 +255,6 @@ class NotesLifecycleLoadTest(SequentialTaskSet):
 
 
 class LocustPerformanceUserRunner(HttpUser):
-    host = API_BASE_URL
+    host = ApiEndpoints.base_url()
     tasks = [NotesLifecycleLoadTest]
     wait_time = between(0.9, 1.1)
