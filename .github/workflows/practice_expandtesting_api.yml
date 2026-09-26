@@ -87,13 +87,13 @@ jobs:
           mkdir -p output_reports
           
           if [ "${{ env.TEST_SUITE_SCOPE }}" = "all" ] || [ "${{ env.TEST_SUITE_SCOPE }}" = "integration" ]; then
-            pytest tests/integration/ --html=output_reports/integration_report.html --self-contained-html || true
+            pytest tests/integration/ --test_env ${{ env.TEST_SUITE_ENV }} --html=output_reports/integration_report.html --self-contained-html || true
           fi
           if [ "${{ env.TEST_SUITE_SCOPE }}" = "all" ] || [ "${{ env.TEST_SUITE_SCOPE }}" = "e2e" ]; then
-            pytest tests/e2e/ --html=output_reports/e2e_report.html --self-contained-html || true
+            pytest tests/e2e/ --test_env ${{ env.TEST_SUITE_ENV }} --html=output_reports/e2e_report.html --self-contained-html || true
           fi
           if [ "${{ env.TEST_SUITE_SCOPE }}" = "all" ] || [ "${{ env.TEST_SUITE_SCOPE }}" = "performance" ]; then
-            locust -f performance/locustfile.py --config=performance/locust.conf --headless -u 3 -r 1 -t 5m --html output_reports/performance_report.html || true
+            TEST_ENV=${{ env.TEST_SUITE_ENV }} locust -f performance/locustfile.py --config=performance/locust.conf --headless -u 3 -r 1 -t 5m --html output_reports/performance_report.html || true
           fi
           
           # Ensure all attachment paths exist even if a test suite was skipped
