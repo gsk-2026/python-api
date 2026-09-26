@@ -46,9 +46,9 @@ class UserTestSteps(Enum):
 
 DEFAULT_URLS = {
     "DFT": "https://practice.expandtesting.com/notes/api",
-    "DIT": "https://dit.practice.expandtesting.com/notes/api",
-    "SIT": "https://sit.practice.expandtesting.com/notes/api",
-    "UAT": "https://uat.practice.expandtesting.com/notes/api",
+    "DIT": "https://practice.expandtesting.com/notes/api",
+    "SIT": "https://practice.expandtesting.com/notes/api",
+    "UAT": "https://practice.expandtesting.com/notes/api",
 }
 
 def get_api_base_url() -> str:
