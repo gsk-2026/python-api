@@ -1,5 +1,5 @@
 pipeline {
-    agent any 
+    agent any
 
     // Jenkins scheduled execution times for different environments
     triggers {
