@@ -9,9 +9,9 @@ pipeline {
             0 2 1 * *   % TARGET_TEST_MODULE=practice_expandtesting_api; TARGET_TEST_ENV=UAT; TARGET_TEST_SCOPE=integration
 
             # Schedule 2: Full test run for new_a_api
-            30 0 * * 1-5 % TARGET_TEST_MODULE=new_a_api; TARGET_TEST_ENV=DIT; TARGET_TEST_SCOPE=all
-            30 1 * * 6   % TARGET_TEST_MODULE=new_a_api; TARGET_TEST_ENV=SIT; TARGET_TEST_SCOPE=all
-            30 2 1 * *   % TARGET_TEST_MODULE=new_a_api; TARGET_TEST_ENV=UAT; TARGET_TEST_SCOPE=integration
+            #30 0 * * 1-5 % TARGET_TEST_MODULE=new_a_api; TARGET_TEST_ENV=DIT; TARGET_TEST_SCOPE=all
+            #30 1 * * 6   % TARGET_TEST_MODULE=new_a_api; TARGET_TEST_ENV=SIT; TARGET_TEST_SCOPE=all
+            #30 2 1 * *   % TARGET_TEST_MODULE=new_a_api; TARGET_TEST_ENV=UAT; TARGET_TEST_SCOPE=integration
         ''')
     }
 
