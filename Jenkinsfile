@@ -1,7 +1,6 @@
 pipeline {
     agent any
 
-    // Jenkins scheduled execution times for different environments
     triggers {
         parameterizedCron('''
             # Schedule 1: Full test run for practice_expandtesting_api
@@ -16,7 +15,6 @@ pipeline {
         ''')
     }
 
-    // User Manual execution from Jenkins anytime
     parameters {
         choice(name: 'TARGET_TEST_MODULE', choices: ['practice_expandtesting_api', 'new_a_api', 'new_b_api'], description: 'Target Test Module')
         choice(name: 'TARGET_TEST_ENV', choices: ['DIT', 'SIT', 'UAT'], description: 'Target Test Environment')
@@ -39,28 +37,21 @@ pipeline {
         stage('Dispatch Request to GitHub Action Engine') {
             steps {
                 script {
-                    // Extract parameters directly (parameterizedCron sets params automatically)
                     def targetTestModule = params.TARGET_TEST_MODULE
                     def targetTestEnv    = params.TARGET_TEST_ENV
                     def targetTestScope  = params.TARGET_TEST_SCOPE
 
-                    def payload = """{
-                        "event_type": "jenkins-trigger",
-                        "client_payload": {
-                            "target_module": "${targetTestModule}",
-                            "target_env": "${targetTestEnv}",
-                            "target_scope": "${targetTestScope}"
-                        }
-                    }"""
+                    // 1. Single-line minified JSON string to prevent Windows batch multiline line-break errors
+                    def payload = "{\"event_type\":\"jenkins-trigger\",\"client_payload\":{\"target_module\":\"${targetTestModule}\",\"target_env\":\"${targetTestEnv}\",\"target_scope\":\"${targetTestScope}\"}}"
 
-                    // REST Call directly communicating back to the GitHub Repository Dispatch API
+                    // 2. Escape double quotes inside Windows bat command and pass GITHUB_TOKEN directly
                     bat """
-                        curl -X POST \
-                        -H "Accept: application/vnd.github+json" \
-                        -H "Authorization: Bearer \$GITHUB_TOKEN" \
-                        -H "X-GitHub-Api-Version: 2022-11-28" \
-                        https://api.github.com/repos/\$REPO_OWNER/\$REPO_NAME/dispatches \
-                        -d '${payload}'
+                        curl -s -X POST ^
+                        -H "Accept: application/vnd.github+json" ^
+                        -H "Authorization: Bearer %GITHUB_TOKEN%" ^
+                        -H "X-GitHub-Api-Version: 2022-11-28" ^
+                        https://api.github.com/repos/%REPO_OWNER%/%REPO_NAME%/dispatches ^
+                        -d "${payload.replace('"', '""')}"
                     """
                     echo "Payload securely dispatched downstream to GitHub Actions runner for module: ${targetTestModule}."
                 }
