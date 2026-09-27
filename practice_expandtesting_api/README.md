@@ -9,7 +9,7 @@ As a dedicated QA exercise application, the application simulates realistic, mul
 ---
 
 
-##  Project Structure
+##  Module Microservic Structure
 ```text
 practice_expandtesting_api/
 ├── config/              
