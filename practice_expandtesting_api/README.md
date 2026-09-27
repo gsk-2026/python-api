@@ -1,10 +1,6 @@
 # Practice ExpandTesting API Automation Module
 
-This is an independent, self-contained API testing microservice framework built to validate the endpoints provided by the ExpandTesting practice platform.
-
-##  Background & Purpose
-
-The purpose of this testing module is to ensure the functional health, schema reliability, and security contracts of the production REST APIs hosted on the **[ExpandTesting Practice Portal](https://expandtesting.com)**, **[Notes API Documentation](https://practice.expandtesting.com/notes/api/api-docs/#/)**.
+This is an independent, self-contained API testing microservice framework built to validate the endpoints provided by the ExpandTesting practice platform.  The purpose of this testing module is to ensure the functional health, schema reliability, and security contracts of the production REST APIs hosted on the **[ExpandTesting Practice Portal](https://expandtesting.com)**, **[Notes API Documentation](https://practice.expandtesting.com/notes/api/api-docs/#/)**.
 
 As a dedicated QA exercise application, the application simulates realistic, multi-tiered technical environments. This test automation suite targets critical microservice subsets across integration, end-to-end, and performance layers:
 * **User Authentication & Session Tokens:** Verifying user registration, login, logout, profile updates, password modification, and account deletion workflows.
@@ -12,30 +8,6 @@ As a dedicated QA exercise application, the application simulates realistic, mul
 * **System Stability & Authorization:** Validating token filters (Authorize apiKey) and component-level baseline health checks (/health-check)
 ---
 
-##  Getting Started & Source Code Download
-
-### 1. Clone the Repository
-```bash
-git clone https://github.com/gsk-2026/python-api python-api-local
-```
-
-### 2. Navigate to the Project Root
-```bash
-cd python-api-local   
-```
-
-### 3. Initialize Virtual Environment
-```bash
-# Windows
-python -m venv .venv
-source .\venv\Scripts\activate
-
-# macOS / Linux
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
----
 
 ##  Project Structure
 ```text
@@ -65,6 +37,32 @@ practice_expandtesting_api/
 ```
 
 ---
+
+##  Getting Started & Source Code Download
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/gsk-2026/python-api python-api-local
+```
+
+### 2. Navigate to the Project Root
+```bash
+cd python-api-local   
+```
+
+### 3. Initialize Virtual Environment
+```bash
+# Windows
+python -m venv .venv
+source .\venv\Scripts\activate
+
+# macOS / Linux
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+---
+
 
 ##  Local Setup & Prerequisites
 
