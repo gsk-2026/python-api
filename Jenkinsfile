@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     triggers {
-        # GitHub Actions: Always runs in UTC for cron
+        // GitHub Actions: Always runs in UTC for cron
         parameterizedCron('''
             # Schedule 1: Full test run for practice_expandtesting_api
             0 5 * * 1-5 % TARGET_TEST_MODULE=practice_expandtesting_api; TARGET_TEST_ENV=DIT; TARGET_TEST_SCOPE=all
