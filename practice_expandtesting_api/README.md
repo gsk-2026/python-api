@@ -131,8 +131,9 @@ PYTHONPATH=practice_expandtesting_api locust -f practice_expandtesting_api/perfo
 
 #### Workflow Features & Controls
 - **Flexible Scope Control (`TEST_SUITE_SCOPE`):** Execute `all`, `integration`, `e2e`, or `performance` test suites.
-- **Dynamic Target Environments (`TEST_SUITE_ENV`):** Seamlessly run tests against `DFT`, `DIT`, `SIT`, or `UAT`.
-- **Standalone HTML Reporting:** Automatically generates and archives HTML reports for Pytest and Locust.
+- **Dynamic Target Environments (`TEST_SUITE_ENV`):** Run tests seamlessly across `DIT`, `SIT`, or `UAT`.
+- **Standalone HTML Reporting:** Generate and archive HTML reports for Pytest and Locust.
+- **Test Reporting Email Notification:** Send test reports directly to recipients configured via GitHub repo secrets
 
 ### Local Terminal Trigger Equivalents (Example)
 
