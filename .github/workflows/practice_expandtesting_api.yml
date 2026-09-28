@@ -114,8 +114,8 @@ jobs:
           password: ${{ secrets.SMTP_PASSWORD }}
           subject: "[QA RUN OUTCOME] Module: practice_expandtesting_api | Env: ${{ env.TEST_SUITE_ENV }}"
           priority: high
-          to: qa-distribution-list@yourcompany.com
-          from: GitHub Pipeline Runner <automated-alerts@yourcompany.com>
+          to: ${{ secrets.SMTP_RECEIVERS }}
+          from: GitHub Pipeline Runner <${{ secrets.SMTP_USERNAME }}> 
           body: |
             Automation QA run execution completed for the module: practice_expandtesting_api.
             
