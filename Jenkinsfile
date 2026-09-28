@@ -2,11 +2,12 @@ pipeline {
     agent any
 
     triggers {
+        # cron UTC
         parameterizedCron('''
             # Schedule 1: Full test run for practice_expandtesting_api
-            0 0 * * 1-5 % TARGET_TEST_MODULE=practice_expandtesting_api; TARGET_TEST_ENV=DIT; TARGET_TEST_SCOPE=all
-            0 1 * * 6   % TARGET_TEST_MODULE=practice_expandtesting_api; TARGET_TEST_ENV=SIT; TARGET_TEST_SCOPE=all
-            0 2 1 * *   % TARGET_TEST_MODULE=practice_expandtesting_api; TARGET_TEST_ENV=UAT; TARGET_TEST_SCOPE=integration
+            0 5 * * 1-5 % TARGET_TEST_MODULE=practice_expandtesting_api; TARGET_TEST_ENV=DIT; TARGET_TEST_SCOPE=all
+            0 6 * * 6   % TARGET_TEST_MODULE=practice_expandtesting_api; TARGET_TEST_ENV=SIT; TARGET_TEST_SCOPE=all
+            0 7 1 * *   % TARGET_TEST_MODULE=practice_expandtesting_api; TARGET_TEST_ENV=UAT; TARGET_TEST_SCOPE=integration
 
             # Schedule 2: Full test run for new_a_api
             #30 0 * * 1-5 % TARGET_TEST_MODULE=new_a_api; TARGET_TEST_ENV=DIT; TARGET_TEST_SCOPE=all
