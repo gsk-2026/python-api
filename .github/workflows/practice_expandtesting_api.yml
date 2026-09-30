@@ -61,7 +61,7 @@ jobs:
     env:
       TEST_SUITE_ENV: ${{ needs.orchestrate-context.outputs.test_env }}
       TEST_SUITE_SCOPE: ${{ needs.orchestrate-context.outputs.test_scope }}
-      TEST_SUITE_MODULE: practice_expandtesting_api
+      TEST_SUITE_MODULE: ${{ needs.orchestrate-context.outputs.test_module }}
 
     steps:
       - name: Checkout Code Repository
@@ -84,24 +84,26 @@ jobs:
       - name: Execute Targeted Test Matrices
         run: |
           cd ${{ env.TEST_SUITE_MODULE }}
-          mkdir -p output_reports
+          #mkdir -p output_reports
+          REPORT_DIR="output_reports/${{ env.TEST_SUITE_ENV }}/${{ env.TEST_SUITE_SCOPE }}"
+          mkdir -p "$REPORT_DIR"
           
           if [ "${{ env.TEST_SUITE_SCOPE }}" = "all" ] || [ "${{ env.TEST_SUITE_SCOPE }}" = "integration" ]; then
-            pytest tests/integration/ --test_env ${{ env.TEST_SUITE_ENV }} --html=output_reports/${{ env.TEST_SUITE_ENV }}_integration_report.html --self-contained-html || true
+            pytest tests/integration/ --test_env ${{ env.TEST_SUITE_ENV }} --html="$REPORT_DIR/${{ env.TEST_SUITE_ENV }}_integration_report.html" --self-contained-html || true
           fi
           if [ "${{ env.TEST_SUITE_SCOPE }}" = "all" ] || [ "${{ env.TEST_SUITE_SCOPE }}" = "e2e" ]; then
-            pytest tests/e2e/ --test_env ${{ env.TEST_SUITE_ENV }} --html=output_reports/${{ env.TEST_SUITE_ENV }}_e2e_report.html --self-contained-html || true
+            pytest tests/e2e/ --test_env ${{ env.TEST_SUITE_ENV }} --html="$REPORT_DIR/${{ env.TEST_SUITE_ENV }}_e2e_report.html" --self-contained-html || true
           fi
           if [ "${{ env.TEST_SUITE_SCOPE }}" = "all" ] || [ "${{ env.TEST_SUITE_SCOPE }}" = "performance" ]; then
-            TEST_ENV=${{ env.TEST_SUITE_ENV }} locust -f performance/locustfile.py --config=performance/locust.conf --headless -u 3 -r 1 -t 5m --html output_reports/${{ env.TEST_SUITE_ENV }}_performance_report.html || true
+            TEST_ENV=${{ env.TEST_SUITE_ENV }} locust -f performance/locustfile.py --config=performance/locust.conf --headless -u 3 -r 1 -t 5m --html "$REPORT_DIR/${{ env.TEST_SUITE_ENV }}_performance_report.html" || true
           fi
-          
+
           # Ensure all attachment paths exist even if a test suite was skipped
           # touch output_reports/integration_report.html
           # touch output_reports/e2e_report.html
           # touch output_reports/performance_report.html
-          
-          # Compress output reports into a zip file
+  
+          # Compress output reports into a zip file inside the module folder
           zip -r qa_test_reports.zip output_reports/
 
       - name: Securely Mail Out Raw Test Reports
@@ -112,12 +114,12 @@ jobs:
           server_port: ${{ secrets.SMTP_PORT }}
           username: ${{ secrets.SMTP_USERNAME }}
           password: ${{ secrets.SMTP_PASSWORD }}
-          subject: "[QA RUN OUTCOME] Module: practice_expandtesting_api | Env: ${{ env.TEST_SUITE_ENV }}"
+          subject: "[QA RUN OUTCOME] Module: ${{ env.TEST_SUITE_MODULE }} | Env: ${{ env.TEST_SUITE_ENV }}"
           priority: high
           to: ${{ secrets.SMTP_RECEIVERS }}
-          from: GitHub Pipeline Runner <${{ secrets.SMTP_USERNAME }}> 
+          from: GitHub Pipeline Runner <${{ secrets.SMTP_USERNAME }}>
           body: |
-            Automation QA run execution completed for the module: practice_expandtesting_api.
+            Automation QA run execution completed for the module: ${{ env.TEST_SUITE_MODULE }}.
             
             Execution Metadata:
             - Selected Test Environment: ${{ env.TEST_SUITE_ENV }}
