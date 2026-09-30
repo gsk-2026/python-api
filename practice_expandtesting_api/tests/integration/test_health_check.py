@@ -179,5 +179,47 @@ def test_health_check_reject_invalid_methods_404(http_method):
 
 
 
+
+def test_health_check_base_url_200():
+    response = requests.get(ApiEndpoints.base_url(), timeout=API_TIMEOUT)
+    check.equal(response.status_code, 200, msg=f"Expected 200, but got {response.status_code}")
+
+    content_type = response.headers.get("Content-Type", "")
+    check.is_in("application/json", content_type, msg=f"Expected JSON format, but got {content_type}")
+
+    resp_json = response.json()
+    check.equal(response.status_code, 200, msg=f"Expected 200, but got {response.status_code}")
+    check.equal(resp_json.get('status'), 200, msg=f"Expected status 200, but got {resp_json.get('status')}")
+    check.is_true(resp_json.get('success'), msg=f"Expected success True, but got {resp_json.get('success')}")
+    check.equal(resp_json.get('message'), "Notes API is Running", msg=f"Expected message 'Notes API is Running', but got {resp_json.get('message')}")
+
+
+
+def test_health_check_dft_front_ui_root_url_200():
+    response = requests.get(ApiEndpoints.dft_front_ui_root_url(), timeout=API_TIMEOUT)
+    check.equal(response.status_code, 200, msg=f"Expected 200, but got {response.status_code}")
+    content_type = response.headers.get("Content-Type", "")
+    check.is_in("text/html; charset=utf-8", content_type, msg=f"Expected HTML format, but got {content_type}")
+    check.is_not_none(response.text, msg=f"Expected response.text not None, but gor{response.text}")
+
+
+def test_health_check_dft_notes_root_url_200():
+    response = requests.get(ApiEndpoints.dft_notes_root_url(), timeout=API_TIMEOUT)
+    check.equal(response.status_code, 200, msg=f"Expected 200, but got {response.status_code}")
+    content_type = response.headers.get("Content-Type", "")
+    check.is_in("text/html; charset=utf-8", content_type, msg=f"Expected HTML format, but got {content_type}")
+    check.is_not_none(response.text, msg=f"Expected response.text not None, but gor{response.text}")
+
+
+def test_health_check_dft_users_root_url_404():
+    response = requests.get(ApiEndpoints.dft_users_root_url(), timeout=API_TIMEOUT)
+    check.equal(response.status_code, 404, msg=f"Expected 200, but got {response.status_code}")
+    content_type = response.headers.get("Content-Type", "")
+    check.is_in("text/html; charset=utf-8", content_type, msg=f"Expected HTML format, but got {content_type}")
+    check.is_not_none(response.text, msg=f"Expected response.text not None, but gor{response.text}")
+
+
+
+
 def test_health_check_return_500():
     pass

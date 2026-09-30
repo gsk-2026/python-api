@@ -59,6 +59,18 @@ def get_api_base_url() -> str:
 class ApiEndpoints:
 
     @classmethod
+    def dft_front_ui_root_url(cls) -> str:
+        return f"https://practice.expandtesting.com"
+
+    @classmethod
+    def dft_users_root_url(cls) -> str:
+        return f"https://practice.expandtesting.com/users"
+
+    @classmethod
+    def dft_notes_root_url(cls) -> str:
+        return f"https://practice.expandtesting.com/notes"
+
+    @classmethod
     def base_url(cls) -> str:
         return f"{get_api_base_url()}"
 
