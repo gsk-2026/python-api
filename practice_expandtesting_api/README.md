@@ -127,7 +127,8 @@ PYTHONPATH=practice_expandtesting_api locust -f practice_expandtesting_api/perfo
 
 ### GitHub Actions Pipeline
 
-- The **GitHub Actions** workflow manages manual on-demand executions. 
+- The **GitHub Actions** workflow manages manual on-demand executions.
+- Every commit pushed to **GitHub** repository main will trigger 'all' test suite for environment 'DIT' 
 
 #### Workflow Features & Controls
 - **Flexible Scope Control (`TEST_SUITE_SCOPE`):** Execute `all`, `integration`, `e2e`, or `performance` test suites.
