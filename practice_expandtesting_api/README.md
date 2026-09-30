@@ -105,7 +105,19 @@ pytest practice_expandtesting_api/tests/integration/test_health_check.py
 PYTHONPATH=practice_expandtesting_api locust -f practice_expandtesting_api/performance/locustfile.py
 ```
 ```bash 
-PYTHONPATH=practice_expandtesting_api locust -f practice_expandtesting_api/performance/locustfile.py --headless -u 3 -r 1 -t 5m
+PYTHONPATH=practice_expandtesting_api locust -f practice_expandtesting_api/performance/locustfile.py --headless -u 3 -r 1 -t 5m --console-stats-interval 15
+```
+```bash 
+PYTHONPATH=practice_expandtesting_api locust -f practice_expandtesting_api/performance/locustfile.py,practice_expandtesting_api/performance/scenarios/smoke.py --headless --console-stats-interval 5
+```
+```bash 
+PYTHONPATH=practice_expandtesting_api locust -f practice_expandtesting_api/performance/locustfile.py,practice_expandtesting_api/performance/scenarios/load.py --headless --console-stats-interval 5
+```
+```bash 
+PYTHONPATH=practice_expandtesting_api locust -f practice_expandtesting_api/performance/locustfile.py,practice_expandtesting_api/performance/scenarios/stress.py --headless --console-stats-interval 5
+```
+```bash 
+PYTHONPATH=practice_expandtesting_api locust -f practice_expandtesting_api/performance/locustfile.py,practice_expandtesting_api/performance/scenarios/spike.py --headless --console-stats-interval 5
 ```
 
 ---
