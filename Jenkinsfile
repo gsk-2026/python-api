@@ -5,14 +5,14 @@ pipeline {
         TZ=America/Chicago
         parameterizedCron('''
             # Schedule 1: Full test run for practice_expandtesting_api
-            H/30 * * * *  % TARGET_TEST_SUITE=practice_expandtesting_api; TARGET_TEST_ENV=DIT; TARGET_TEST_SCOPE=all
-            15 6 * * 1-6 % TARGET_TEST_SUITE=practice_expandtesting_api; TARGET_TEST_ENV=SIT; TARGET_TEST_SCOPE=all
-            15 7 1 * *   % TARGET_TEST_SUITE=practice_expandtesting_api; TARGET_TEST_ENV=UAT; TARGET_TEST_SCOPE=integration
+            H/30 * * * *  %TARGET_TEST_SUITE=practice_expandtesting_api;TARGET_TEST_ENV=DIT;TARGET_TEST_SCOPE=all
+            15 1 * * 1-6 %TARGET_TEST_SUITE=practice_expandtesting_api;TARGET_TEST_ENV=SIT;TARGET_TEST_SCOPE=all
+            15 2 1 * *   %TARGET_TEST_SUITE=practice_expandtesting_api;TARGET_TEST_ENV=UAT;TARGET_TEST_SCOPE=integration
 
             # Schedule 2: Full test run for restful_booker_api
-            0 4 * * 1-5 % TARGET_TEST_SUITE=restful_booker_api; TARGET_TEST_ENV=DIT; TARGET_TEST_SCOPE=all
-            0 5 * * 6   % TARGET_TEST_SUITE=restful_booker_api; TARGET_TEST_ENV=SIT; TARGET_TEST_SCOPE=all
-            0 6 1 * *   % TARGET_TEST_SUITE=restful_booker_api; TARGET_TEST_ENV=UAT; TARGET_TEST_SCOPE=integration
+            0 22 * * 1-5 %TARGET_TEST_SUITE=restful_booker_api;TARGET_TEST_ENV=DIT;TARGET_TEST_SCOPE=all
+            0 23 * * 6   %TARGET_TEST_SUITE=restful_booker_api;TARGET_TEST_ENV=SIT;TARGET_TEST_SCOPE=all
+            0 24 1 * *   %TARGET_TEST_SUITE=restful_booker_api;TARGET_TEST_ENV=UAT;TARGET_TEST_SCOPE=integration
         ''')
     }
 
