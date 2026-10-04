@@ -102,22 +102,22 @@ pytest practice_expandtesting_api/tests/integration/test_health_check.py
 
 ### 5. Run Performance Tests 
 ```bash 
-PYTHONPATH=practice_expandtesting_api locust -f practice_expandtesting_api/performance/locustfile.py
+PYTHONPATH=practice_expandtesting_api locust -f practice_expandtesting_api/performance/locustfile_practice_expandtesting.py
 ```
 ```bash 
-PYTHONPATH=practice_expandtesting_api locust -f practice_expandtesting_api/performance/locustfile.py --headless -u 3 -r 1 -t 5m --console-stats-interval 15
+PYTHONPATH=practice_expandtesting_api locust -f practice_expandtesting_api/performance/locustfile_practice_expandtesting.py --headless -u 3 -r 1 -t 5m --console-stats-interval 15
 ```
 ```bash 
-PYTHONPATH=practice_expandtesting_api locust -f practice_expandtesting_api/performance/locustfile.py,practice_expandtesting_api/performance/scenarios/smoke.py --headless --console-stats-interval 5
+PYTHONPATH=practice_expandtesting_api locust -f practice_expandtesting_api/performance/locustfile_practice_expandtesting.py,practice_expandtesting_api/performance/scenarios/smoke.py --headless --console-stats-interval 5
 ```
 ```bash 
-PYTHONPATH=practice_expandtesting_api locust -f practice_expandtesting_api/performance/locustfile.py,practice_expandtesting_api/performance/scenarios/load.py --headless --console-stats-interval 5
+PYTHONPATH=practice_expandtesting_api locust -f practice_expandtesting_api/performance/locustfile_practice_expandtesting.py,practice_expandtesting_api/performance/scenarios/load.py --headless --console-stats-interval 5
 ```
 ```bash 
-PYTHONPATH=practice_expandtesting_api locust -f practice_expandtesting_api/performance/locustfile.py,practice_expandtesting_api/performance/scenarios/stress.py --headless --console-stats-interval 5
+PYTHONPATH=practice_expandtesting_api locust -f practice_expandtesting_api/performance/locustfile_practice_expandtesting.py,practice_expandtesting_api/performance/scenarios/stress.py --headless --console-stats-interval 5
 ```
 ```bash 
-PYTHONPATH=practice_expandtesting_api locust -f practice_expandtesting_api/performance/locustfile.py,practice_expandtesting_api/performance/scenarios/spike.py --headless --console-stats-interval 5
+PYTHONPATH=practice_expandtesting_api locust -f practice_expandtesting_api/performance/locustfile_practice_expandtesting.py,practice_expandtesting_api/performance/scenarios/spike.py --headless --console-stats-interval 5
 ```
 
 ---
@@ -158,7 +158,7 @@ pytest tests/integration/ --test_env SIT --html=output_reports/integration_repor
 pytest tests/e2e/ --test_env SIT --html=output_reports/e2e_report.html --self-contained-html
 
 # Locust Performance Tests
-TEST_ENV=SIT locust -f performance/locustfile.py --config=performance/locust.conf --headless -u 3 -r 1 -t 5m --html output_reports/performance_report.html
+TEST_ENV=SIT locust -f performance/locustfile_practice_expandtesting.py --config=performance/locust_practice_expandtesting.conf --headless -u 3 -r 1 -t 5m --html output_reports/performance_report.html
 ```
 
 ---

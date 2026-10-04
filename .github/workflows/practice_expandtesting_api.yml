@@ -95,7 +95,7 @@ jobs:
             pytest tests/e2e/ --test_env ${{ env.TEST_SUITE_ENV }} --html="$REPORT_DIR/${{ env.TEST_SUITE_ENV }}_e2e_report.html" --self-contained-html || true
           fi
           if [ "${{ env.TEST_SUITE_SCOPE }}" = "all" ] || [ "${{ env.TEST_SUITE_SCOPE }}" = "performance" ]; then
-            TEST_ENV=${{ env.TEST_SUITE_ENV }} locust -f performance/locustfile.py --config=performance/locust.conf --headless -u 3 -r 1 -t 5m --html "$REPORT_DIR/${{ env.TEST_SUITE_ENV }}_performance_report.html" || true
+            TEST_ENV=${{ env.TEST_SUITE_ENV }} locust -f performance/locustfile_practice_expandtesting.py --config=performance/locust_practice_expandtesting.conf --headless -u 3 -r 1 -t 5m --html "$REPORT_DIR/${{ env.TEST_SUITE_ENV }}_performance_report.html" || true
           fi
 
           # Ensure all attachment paths exist even if a test suite was skipped
