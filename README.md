@@ -17,16 +17,25 @@ python-api/
 ├── .env                               # Shared environment values
 ├── .venv/                             # Python virtual environment
 │
-├── practice_expandtesting_api/        # API testing module
+├── practice_expandtesting_api/        # API testing suite
 │   ├── config/
 │   ├── performance/
 │   ├── src/
 │   ├── tests/
-│   ├── pytest.ini                     # Module pytest configuration
-│   ├── requirements.txt               # Module specific dependency
-│   └── README.md                      # Module-specific documentation
+│   ├── pytest.ini                     # Suite pytest configuration
+│   ├── requirements.txt               # Suite-specific dependency
+│   └── README.md                      # Suite-specific documentation
 │
-└── [new_microservice_api]/            # New microservice API testing module template
+├── restful_booker_api/                # API testing suite
+│   ├── config/
+│   ├── performance/
+│   ├── src/
+│   ├── tests/
+│   ├── pytest.ini
+│   ├── requirements.txt
+│   └── README.md
+│
+└── [new_microservice_api]/            # New microservice API testing suite template
     ├── pytest.ini
     └── requirements.txt
 ```
@@ -64,20 +73,20 @@ pip install -r requirements.txt
 
 ---
 
-## Cross-Module Test Execution
-Installs module specific Python packages and versions. For detailed steps, please refer to README.md of **individual module**
+## Cross-Suite Test Execution
+Installs suite specific Python packages and versions. For detailed steps, please refer to README.md of **individual suite**
 
-### Module 1: Practice ExpandTesting API
+### Suite 1: Practice ExpandTesting API
 
 ```bash
-# Install specific module dependencies
+# Install specific suite dependencies
 pip install -r practice_expandtesting_api/requirements.txt
 
 # Run the entire functional test suite (Integration, E2E, performance/load et al.)
 pytest practice_expandtesting_api
 ```
 
-### Module 2: Future New Applications (e.g., `a_api`)
+### Suite 2: Future New Applications (e.g., `a_api`)
 
 ```bash
 # Install local packages
@@ -89,17 +98,18 @@ pytest a_api
 
 ## Environmental Verification Matrix
 
-| Target Microservice | Domain Purpose | Framework Engine | Module Status |
-| :--- | :--- | :--- | :--- |
-| `practice_expandtesting_api` | practice.expandtesting.com/notes/api | Pytest & Locust | 🟢 Active |
-| `a_api` / `b_api` | Scaled Business Testing Sub-systems | Pytest | 🟡 Planning |
+| Target Microservice          | API Base URLs                        | Framework Engine | Suite Status |
+|:-----------------------------|:-------------------------------------|:-----------------|:-------------|
+| `practice_expandtesting_api` | practice.expandtesting.com/notes/api | Pytest & Locust  | 🟢 Active    |
+| `restful_booker_api`         | restful-booker.herokuapp.com         | Pytest & Locust  | 🟢 Active    |
+| `a_api` / `b_api`            | Scaled Business Testing Sub-systems  | Pytest           | 🟡 Planning  |
 
 
 ---
 
 ## CI/CD Pipelines
 
-This repository supports flexible automated execution using **Jenkins**, and also manually thru both **GitHub Actions** and **Jenkins**.
+This repository supports flexible automated execution using **Jenkins**, and also manually thru both **GitHub Actions** and **Jenkins Pipeline**.
 
 ### Jenkins Pipeline Trigger Options
 
@@ -112,6 +122,6 @@ This repository supports flexible automated execution using **Jenkins**, and als
 
 ### Local Terminal Trigger Equivalents
 
-Please refer the specification from README of individual modules for details
+- Please refer the specification from README of individual suite for details
 
 ---

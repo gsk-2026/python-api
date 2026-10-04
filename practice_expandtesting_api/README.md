@@ -1,15 +1,15 @@
-# Practice ExpandTesting API Automation Module
+# Practice ExpandTesting API Automation Suite
 
-This is an independent, self-contained API testing microservice framework built to validate the endpoints provided by the ExpandTesting practice platform.  The purpose of this testing module is to ensure the functional health, schema reliability, and security contracts of the production REST APIs hosted on the **[ExpandTesting Practice Portal](https://expandtesting.com)**, **[Notes API Documentation](https://practice.expandtesting.com/notes/api/api-docs/#/)**.
+This is an independent, self-contained API testing microservice framework built to validate the endpoints provided by the ExpandTesting practice platform.  The purpose of this testing suite is to ensure the functional health, schema reliability, and security contracts of the production REST APIs hosted on the **[ExpandTesting Practice Portal](https://expandtesting.com)**, **[Notes API Documentation](https://practice.expandtesting.com/notes/api/api-docs/#/)**.
 
 As a dedicated QA exercise application, the application simulates realistic, multi-tiered technical environments. This test automation suite targets critical microservice subsets across integration, end-to-end, and performance layers:
 * **User Authentication & Session Tokens:** Verifying user registration, login, logout, profile updates, password modification, and account deletion workflows.
-* **Core Business Logic (Notes Application):** Programmatically asserting database persistence contracts—specifically verifying CRUD operations (POST, GET, PUT, PATCH, DELETE) for the notes service.
+* **Core Business Logic (Notes Application):** Programmatically asserting data persistence contracts—specifically verifying CRUD operations (POST, GET, PUT, PATCH, DELETE) for the notes service.
 * **System Stability & Authorization:** Validating token filters (Authorize apiKey) and component-level baseline health checks (/health-check)
 ---
 
 
-##  Module Microservic Structure
+##  Suite Microservic Structure
 ```text
 practice_expandtesting_api/
 ├── config/              
@@ -66,7 +66,7 @@ source .venv/bin/activate
 
 ##  Local Setup & Prerequisites
 
-### 1. Install Module Dependencies
+### 1. Install Suite Dependencies
 
 ```bash
 pip install -r practice_expandtesting_api/requirements.txt
@@ -80,7 +80,7 @@ pip install -r practice_expandtesting_api/requirements.txt
 
 ## Running Tests
 
-### 1. Run the Entire Test Suite (Integration + E2E)
+### 1. Run the Entire Test Scope (Integration + E2E)
 ```bash
 pytest practice_expandtesting_api
 ```
@@ -140,11 +140,11 @@ PYTHONPATH=practice_expandtesting_api locust -f practice_expandtesting_api/perfo
 ### GitHub Actions Pipeline
 
 - The **GitHub Actions** workflow manages manual on-demand executions.
-- Every commit pushed to **GitHub** repository main will trigger 'all' test suite for environment 'DIT' 
+- Every commit pushed to **GitHub** repository main will trigger 'all' test scope for environment 'DIT' 
 
 #### Workflow Features & Controls
-- **Flexible Scope Control (`TEST_SUITE_SCOPE`):** Execute `all`, `integration`, `e2e`, or `performance` test suites.
-- **Dynamic Target Environments (`TEST_SUITE_ENV`):** Run tests seamlessly across `DIT`, `SIT`, or `UAT`.
+- **Flexible Scope Control (`GIT_TEST_SCOPE`):** Execute `all`, `integration`, `e2e`, or `performance` test scopes.
+- **Dynamic Target Environments (`GIT_TEST_ENV`):** Run tests seamlessly across `DIT`, `SIT`, or `UAT`.
 - **Standalone HTML Reporting:** Generate and archive HTML reports for Pytest and Locust.
 - **Test Reporting Email Notification:** Send test reports directly to recipients configured via GitHub repo secrets
 

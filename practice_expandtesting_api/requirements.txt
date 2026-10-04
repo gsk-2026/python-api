@@ -1,5 +1,5 @@
 locust==2.34.0
 pytest==9.1.1
 pytest_check==2.9.1
-python-dotenv==1.2.3
+python-dotenv==1.2.4
 Requests==2.34.2
