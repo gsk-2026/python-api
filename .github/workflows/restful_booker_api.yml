@@ -1,0 +1,124 @@
+name: Restful Booker API - Multi-Env QA Pipeline
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'restful_booker_api/**'
+
+  repository_dispatch:
+    types: [jenkins-trigger]
+
+  workflow_dispatch:
+    inputs:
+      test_env:
+        description: 'Select Test Environment'
+        required: true
+        default: 'DIT'
+        type: choice
+        options: [DIT, SIT, UAT]
+      test_scope:
+        description: 'Select Test Scope'
+        required: true
+        default: 'all'
+        type: choice
+        options: [all, integration, e2e, performance]
+
+jobs:
+  orchestrate-context:
+    name: Evaluate Run Context
+    runs-on: ubuntu-latest
+    outputs:
+      test_suite: ${{ steps.determine-context.outputs.TEST_SUITE }}
+      test_env: ${{ steps.determine-context.outputs.TEST_ENV }}
+      test_scope: ${{ steps.determine-context.outputs.TEST_SCOPE }}
+    steps:
+      - id: determine-context
+        name: Parse Trigger Type and Environment Mapping
+        run: |
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            echo "TEST_SUITE=${{ github.event.client_payload.jenkins_target_suite }}" >> $GITHUB_OUTPUT
+            echo "TEST_ENV=${{ github.event.client_payload.jenkins_target_env }}" >> $GITHUB_OUTPUT
+            echo "TEST_SCOPE=${{ github.event.client_payload.jenkins_target_scope }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "TEST_SUITE=restful_booker_api" >> $GITHUB_OUTPUT
+            echo "TEST_ENV=${{ github.event.inputs.test_env }}" >> $GITHUB_OUTPUT
+            echo "TEST_SCOPE=${{ github.event.inputs.test_scope }}" >> $GITHUB_OUTPUT
+          else
+            echo "TEST_SUITE=restful_booker_api" >> $GITHUB_OUTPUT
+            echo "TEST_ENV=DIT" >> $GITHUB_OUTPUT
+            echo "TEST_SCOPE=all" >> $GITHUB_OUTPUT
+          fi 
+
+  execute-qa-engines:
+    name: Run QA Automation
+    needs: orchestrate-context
+    # Only run this job if TEST_SUITE equals restful_booker_api
+    if: ${{ needs.orchestrate-context.outputs.test_suite == 'restful_booker_api' }}
+    runs-on: ubuntu-latest
+    environment: ${{ needs.orchestrate-context.outputs.test_env }}
+    env:
+      GIT_TEST_ENV: ${{ needs.orchestrate-context.outputs.test_env }}
+      GIT_TEST_SCOPE: ${{ needs.orchestrate-context.outputs.test_scope }}
+      GIT_TEST_SUITE: ${{ needs.orchestrate-context.outputs.test_suite }}
+
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Initialize Python Core
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Sub-Suite Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f "${{ env.GIT_TEST_SUITE }}/requirements.txt" ]; then
+            pip install -r "${{ env.GIT_TEST_SUITE }}/requirements.txt"
+          fi
+          pip install pytest-html locust
+
+      - name: Execute Targeted Test Matrices
+        run: |
+          cd ${{ env.GIT_TEST_SUITE }}
+          REPORT_DIR="output_reports/${{ env.GIT_TEST_ENV }}/${{ env.GIT_TEST_SCOPE }}"
+          mkdir -p "$REPORT_DIR"
+          
+          if [ "${{ env.GIT_TEST_SCOPE }}" = "all" ] || [ "${{ env.GIT_TEST_SCOPE }}" = "integration" ]; then
+            pytest tests/integration/ --test_env ${{ env.GIT_TEST_ENV }} --html="$REPORT_DIR/${{ env.GIT_TEST_ENV }}_integration_report.html" --self-contained-html || true
+          fi
+          if [ "${{ env.GIT_TEST_SCOPE }}" = "all" ] || [ "${{ env.GIT_TEST_SCOPE }}" = "e2e" ]; then
+            pytest tests/e2e/ --test_env ${{ env.GIT_TEST_ENV }} --html="$REPORT_DIR/${{ env.GIT_TEST_ENV }}_e2e_report.html" --self-contained-html || true
+          fi
+          if [ "${{ env.GIT_TEST_SCOPE }}" = "all" ] || [ "${{ env.GIT_TEST_SCOPE }}" = "performance" ]; then
+            TEST_ENV=${{ env.GIT_TEST_ENV }} locust -f performance/locustfile_restful_booker.py --config=performance/locust_restful_booker.conf --headless -u 3 -r 1 -t 5m --console-stats-interval 15 --html "$REPORT_DIR/${{ env.GIT_TEST_ENV }}_performance_report.html" || true
+          fi
+          
+          # Compress output reports into a zip file inside the suite folder
+          zip -r qa_test_reports.zip output_reports/
+
+      - name: Securely Mail Out Raw Test Reports
+        if: always()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.SMTP_SERVER }}
+          server_port: ${{ secrets.SMTP_PORT }}
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "[QA RUN OUTCOME] Suite: ${{ env.GIT_TEST_SUITE }} | Env: ${{ env.GIT_TEST_ENV }}"
+          priority: high
+          to: ${{ secrets.SMTP_RECEIVERS }}
+          from: GitHub Pipeline Runner <${{ secrets.SMTP_USERNAME }}>
+          body: |
+            Automation QA run execution completed for the suite: ${{ env.GIT_TEST_SUITE }}.
+            
+            Execution Metadata:
+            - Selected Test Environment: ${{ env.GIT_TEST_ENV }}
+            - Selected Test Scope: ${{ env.GIT_TEST_SCOPE }}
+            - Initial Pipeline Trigger Event: ${{ github.event_name }}
+            
+            The raw execution documents are securely bound to this email context. No metrics have been recorded on persistent cloud storage volumes.
+          attachments: ${{ env.GIT_TEST_SUITE }}/qa_test_reports.zip

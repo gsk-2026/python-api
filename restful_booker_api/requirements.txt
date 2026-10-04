@@ -1,0 +1,5 @@
+locust==2.46.6
+locust-plugins==5.0.3
+pytest==9.1.1
+pytest_check==2.9.1
+python-dotenv==1.2.4
