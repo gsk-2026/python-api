@@ -94,7 +94,7 @@ jobs:
             pytest tests/e2e/ --test_env ${{ env.GIT_TEST_ENV }} --html="$REPORT_DIR/${{ env.GIT_TEST_ENV }}_e2e_report.html" --self-contained-html || true
           fi
           if [ "${{ env.GIT_TEST_SCOPE }}" = "all" ] || [ "${{ env.GIT_TEST_SCOPE }}" = "performance" ]; then
-            TEST_ENV=${{ env.GIT_TEST_ENV }} locust -f performance/locustfile_practice_expandtesting.py --config=performance/locust_practice_expandtesting.conf --headless -u 3 -r 1 -t 5m --html "$REPORT_DIR/${{ env.GIT_TEST_ENV }}_performance_report.html" || true
+            TEST_ENV=${{ env.GIT_TEST_ENV }} locust -f performance/locustfile_practice_expandtesting.py --config=performance/locust_practice_expandtesting.conf --headless -u 3 -r 1 -t 5m --console-stats-interval 15 --html "$REPORT_DIR/${{ env.GIT_TEST_ENV }}_performance_report.html" || true
           fi
           
           # Compress output reports into a zip file inside the suite folder
