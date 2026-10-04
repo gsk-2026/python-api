@@ -3,17 +3,18 @@ pipeline {
 
     triggers {
         parameterizedCron('''
+            # GitHub Actions: Override the default which is in UTC for cron
             TZ=America/Chicago
 
             # Schedule 1: Full test run for practice_expandtesting_api
-            H/30 * * * *  %TARGET_TEST_SUITE=practice_expandtesting_api;TARGET_TEST_ENV=DIT;TARGET_TEST_SCOPE=all
-            15 22 * * 6   %TARGET_TEST_SUITE=practice_expandtesting_api;TARGET_TEST_ENV=SIT;TARGET_TEST_SCOPE=all
-            15 22 * * 7   %TARGET_TEST_SUITE=practice_expandtesting_api;TARGET_TEST_ENV=UAT;TARGET_TEST_SCOPE=integration
+            0 22 * * 1-5 %TARGET_TEST_SUITE=practice_expandtesting_api;TARGET_TEST_ENV=DIT;TARGET_TEST_SCOPE=all
+            0 22 * * 6   %TARGET_TEST_SUITE=practice_expandtesting_api;TARGET_TEST_ENV=SIT;TARGET_TEST_SCOPE=all
+            0 22 * * 7   %TARGET_TEST_SUITE=practice_expandtesting_api;TARGET_TEST_ENV=UAT;TARGET_TEST_SCOPE=integration
 
             # Schedule 2: Full test run for restful_booker_api
-            0 0 * * 1-5 %TARGET_TEST_SUITE=restful_booker_api;TARGET_TEST_ENV=DIT;TARGET_TEST_SCOPE=all
-            0 0 * * 6   %TARGET_TEST_SUITE=restful_booker_api;TARGET_TEST_ENV=SIT;TARGET_TEST_SCOPE=all
-            0 0 * * 7   %TARGET_TEST_SUITE=restful_booker_api;TARGET_TEST_ENV=UAT;TARGET_TEST_SCOPE=integration
+            0 23 * * 1-5 %TARGET_TEST_SUITE=restful_booker_api;TARGET_TEST_ENV=DIT;TARGET_TEST_SCOPE=all
+            0 23 * * 6   %TARGET_TEST_SUITE=restful_booker_api;TARGET_TEST_ENV=SIT;TARGET_TEST_SCOPE=all
+            0 23 * * 7   %TARGET_TEST_SUITE=restful_booker_api;TARGET_TEST_ENV=UAT;TARGET_TEST_SCOPE=integration
         ''')
     }
 
