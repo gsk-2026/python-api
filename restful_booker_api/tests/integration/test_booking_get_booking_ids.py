@@ -124,7 +124,7 @@ def test_booking_get_booking_ids_first_james_last_brown_200(manage_api_context, 
 
 def test_booking_get_booking_ids_check_in_200(manage_api_context, manage_book_creation_json_context):
     # create
-    #req_body, book_id = manage_book_creation_json_context(user_id=7)
+    req_body, book_id = manage_book_creation_json_context(user_id=7)
 
     # get
     api = manage_api_context( base_url=ApiEndpoints.base_url() )
@@ -138,7 +138,7 @@ def test_booking_get_booking_ids_check_in_200(manage_api_context, manage_book_cr
     check.is_instance(resp.json(), list)
 
     resp_json = resp.json()
-    check.greater_equal(len(resp_json), 0)      # check.greater(len(resp_json), 0)  # defect with "checkin"
+    check.greater(len(resp_json), 0)      # check.greater(len(resp_json), 0)  # defect with "checkin"
     #check.is_true(any(book.get('bookingid') == book_id for book in resp_json))   # defect for "checkin"
 
 
@@ -179,7 +179,7 @@ def test_booking_get_booking_ids_check_in_out_200(manage_api_context, manage_boo
     check.is_instance(resp.json(), list)
 
     resp_json = resp.json()
-    check.greater_equal(len(resp_json), 0)      # check.greater(len(resp_json), 0)  # defect with "checkin"
+    check.greater(len(resp_json), 0)        # check.greater(len(resp_json), 0)  # defect with "checkin"
     #check.is_true(any(book.get('bookingid') == book_id for book in resp_json))     # defect for "checkin"
 
 
