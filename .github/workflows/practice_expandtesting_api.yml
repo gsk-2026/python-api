@@ -1,5 +1,5 @@
 name: github-trigger-practice_expandtesting_api
-run-name: "${{ github.event_name == 'push' && format('{0} [{1}]', github.event.head_commit.message, '-trigger-practice_expandtesting_api') || '' }}"
+run-name: "${{ github.event_name == 'push' && format('[{0}] {1}', github.event.head_commit.message, '-trigger-practice_expandtesting_api') || '' }}"
 
 on:
   push:
