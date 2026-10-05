@@ -305,7 +305,7 @@ class RestfulBookerWorkflowTest(SequentialTaskSet):
 
 
     @task
-    def get_bookings_by_dates(self):
+    def get_bookings_by_checkin_checkout(self):
         params = {
             "checkin": str(self.booking["bookingdates"]["checkin"]),
             "checkout": str(self.booking["bookingdates"]["checkout"])
