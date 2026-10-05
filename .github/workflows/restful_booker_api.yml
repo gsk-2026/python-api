@@ -8,7 +8,7 @@ on:
       - 'restful_booker_api/**'
 
   repository_dispatch:
-    types: [jenkins-trigger]
+    types: [jenkins-trigger-restful_booker_api]
 
   workflow_dispatch:
     inputs:

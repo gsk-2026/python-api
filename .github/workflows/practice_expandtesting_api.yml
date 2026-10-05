@@ -8,7 +8,7 @@ on:
       - 'practice_expandtesting_api/**'
 
   repository_dispatch:
-    types: [jenkins-trigger]
+    types: [jenkins-trigger-practice_expandtesting_api]
 
   workflow_dispatch:
     inputs:

@@ -45,7 +45,7 @@ pipeline {
                     def targetTestScope  = params.TARGET_TEST_SCOPE
 
                     // 1. Single-line minified JSON string to prevent Windows batch multiline line-break errors
-                    def payload = "{\"event_type\":\"jenkins-trigger\",\"client_payload\":{\"jenkins_target_suite\":\"${targetTestSuite}\",\"jenkins_target_env\":\"${targetTestEnv}\",\"jenkins_target_scope\":\"${targetTestScope}\"}}"
+                    def payload = "{\"event_type\":\"jenkins-trigger-${targetTestSuite}\",\"client_payload\":{\"jenkins_target_suite\":\"${targetTestSuite}\",\"jenkins_target_env\":\"${targetTestEnv}\",\"jenkins_target_scope\":\"${targetTestScope}\"}}"
 
                     // 2. Escape double quotes inside Windows bat command and pass GITHUB_TOKEN directly
                     bat """
