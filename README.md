@@ -27,17 +27,19 @@ python-api/
 │   └── README.md                      # Suite-specific documentation
 │
 ├── restful_booker_api/                # API testing suite
-│   ├── config/
-│   ├── performance/
-│   ├── src/
-│   ├── tests/
+│   ├── .../
 │   ├── pytest.ini
 │   ├── requirements.txt
 │   └── README.md
 │
+├── client_resource_access_api/        # API testing suite
+│   ├── .../
+│   ├── ...
+│   └── README.md
+│
 └── [new_microservice_api]/            # New microservice API testing suite template
-    ├── pytest.ini
-    └── requirements.txt
+    ├── .../
+    └── ...
 ```
 
 ---
@@ -102,6 +104,7 @@ pytest a_api
 |:-----------------------------|:-------------------------------------|:-----------------|:-------------|
 | `practice_expandtesting_api` | practice.expandtesting.com/notes/api | Pytest & Locust  | 🟢 Active    |
 | `restful_booker_api`         | restful-booker.herokuapp.com         | Pytest & Locust  | 🟢 Active    |
+| `client_resource_access_api` | restful-booker.herokuapp.com         | Pytest & Locust  | 🟢 Active    |
 | `a_api` / `b_api`            | Scaled Business Testing Sub-systems  | Pytest           | 🟡 Planning  |
 
 
