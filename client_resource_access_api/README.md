@@ -151,7 +151,7 @@ pytest tests/integration/ --test_env SIT --html=output_reports/integration_repor
 pytest tests/e2e/ --test_env SIT --html=output_reports/e2e_report.html --self-contained-html
 
 # Locust Performance Tests
-TEST_ENV=SIT locust -f performance/locustfile_client_resource_access.py --config=performance/locustfile_client_resource_access.conf --headless -u 3 -r 1 -t 5m --html output_reports/performance_report.html
+TEST_ENV=SIT locust -f performance/locustfile_client_resource_access.py --config=performance/locust_client_resource_access.conf --headless -u 3 -r 1 -t 5m --html output_reports/performance_report.html
 ```
 
 ---
