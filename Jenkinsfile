@@ -24,7 +24,7 @@ pipeline {
     }
 
     parameters {
-        choice(name: 'TARGET_TEST_SUITE', choices: ['practice_expandtesting_api', 'restful_booker_api'], description: 'Target Test Suite')
+        choice(name: 'TARGET_TEST_SUITE', choices: ['client_resource_access_api', practice_expandtesting_api', 'restful_booker_api'], description: 'Target Test Suite')
         choice(name: 'TARGET_TEST_ENV', choices: ['DIT', 'SIT', 'UAT'], description: 'Target Test Environment')
         choice(name: 'TARGET_TEST_SCOPE', choices: ['all', 'integration', 'e2e', 'performance'], description: 'Target Test Scope')
     }
