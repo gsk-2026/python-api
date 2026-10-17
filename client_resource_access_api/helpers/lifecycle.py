@@ -19,14 +19,15 @@ def start_app():
     java_process = subprocess.Popen(
         cmd,
         cwd=PROJECT_ROOT,
-        stdout=None,  #subprocess.DEVNULL,
-        stderr=None   #subprocess.DEVNULL
+        stdout=subprocess.PIPE,  #subprocess.DEVNULL,  #None,
+        stderr=subprocess.PIPE   #subprocess.DEVNULL  #None
     )
 
     ready = False
     for _ in range(60):
         if java_process.poll() is not None:
-            raise RuntimeError("Client_Resource_Access Java application exited prematurely.")
+            stdout, stderr = java_process.communicate()
+            raise RuntimeError(f"Java app exited prematurely:\nSTDOUT: {stdout.decode()}\nSTDERR: {stderr.decode()}") 
 
         try:
             res = requests.get(
