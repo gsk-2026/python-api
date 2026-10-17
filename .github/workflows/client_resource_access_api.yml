@@ -65,13 +65,6 @@ jobs:
       GIT_TEST_SUITE: ${{ needs.orchestrate-context.outputs.test_suite }}
 
     steps:
-      - name: Set up Java JDK
-        uses: actions/setup-java@v4
-        with:
-            distribution: 'temurin'
-            java-version: '26'
-            cache: 'maven'
-
       - name: Checkout Code Repository
         uses: actions/checkout@v4
 
