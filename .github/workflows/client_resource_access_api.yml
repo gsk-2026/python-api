@@ -68,6 +68,7 @@ jobs:
       APP_DB_PSWD: ""
       APP_DB_DRIVER: org.h2.Driver
       APP_DB_DDL_AUTO: create-drop
+      APP_DB_PLATFORM: org.hibernate.dialect.H2Dialect
 
     steps:
       - name: Checkout Code Repository
