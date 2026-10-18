@@ -18,7 +18,25 @@ java_process = None
 
 def start_app():
     global java_process
-    cmd = ["java", "-Dspring.profiles.active=qatest", "-jar", JAR_PATH]
+    db_url = os.getenv("APP_DB_URL", "jdbc:oracle:thin:@10.0.0.252:1521:free")
+    db_user = os.getenv("APP_DB_USER", "system")
+    db_pswd = os.getenv("APP_DB_PSWD", "Sankui2026")
+    db_driver = os.getenv("APP_DB_DRIVER", "oracle.jdbc.OracleDriver")
+    db_platform = os.getenv("APP_DB_PLATFORM", "org.hibernate.dialect.OracleDialect")
+    db_ddl = os.getenv("APP_DB_DDL_AUTO", "validate")
+
+    cmd = [
+        "java",
+        "-Dspring.profiles.active=qatest",
+        f"-Dspring.datasource.url={db_url}",
+        f"-Dspring.datasource.username={db_user}",
+        f"-Dspring.datasource.password={db_pswd}",
+        f"-Dspring.datasource.driver-class-name={db_driver}",
+        f"-Dspring.jpa.database-platform={db_platform}",
+        f"-Dspring.jpa.hibernate.ddl-auto={db_ddl}",
+        f"-Dspring.jpa.properties.hibernate.dialect={db_platform}",
+        "-jar",
+        JAR_PATH]
 
     java_process = subprocess.Popen(
         cmd,
