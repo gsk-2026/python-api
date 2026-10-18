@@ -22,7 +22,7 @@ def start_app():
     db_user = os.getenv("APP_DB_USER", "sa")
     db_pswd = os.getenv("APP_DB_PSWD", "")
     db_driver = os.getenv("APP_DB_DRIVER", "org.h2.Driver")
-    db_platform = os.getenv("APP_DB_PLATFORM", "org.hibernate.dialect.H2Dialec")
+    db_platform = os.getenv("APP_DB_PLATFORM", "org.hibernate.dialect.H2Dialect")
     db_ddl = os.getenv("APP_DB_DDL_AUTO", "create-drop")
 
     cmd = [
