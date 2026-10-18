@@ -24,7 +24,8 @@ def start_app():
         cmd,
         cwd=PROJECT_ROOT,
         stdout=stdout_file,    #subprocess.PIPE,  #subprocess.DEVNULL,     #None,
-        stderr=stderr_file     #subprocess.PIPE   #subprocess.DEVNULL      #None
+        stderr=stderr_file,    #subprocess.PIPE,  #subprocess.DEVNULL,     #None,
+        env=os.environ
     )
 
     ready = False

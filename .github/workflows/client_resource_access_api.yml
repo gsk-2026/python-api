@@ -63,6 +63,11 @@ jobs:
       GIT_TEST_ENV: ${{ needs.orchestrate-context.outputs.test_env }}
       GIT_TEST_SCOPE: ${{ needs.orchestrate-context.outputs.test_scope }}
       GIT_TEST_SUITE: ${{ needs.orchestrate-context.outputs.test_suite }}
+      APP_DB_URL: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;NON_KEYWORDS=KEY,VALUE;DB_CLOSE_ON_EXIT=FALSE
+      APP_DB_USER: sa
+      APP_DB_PSWD: ""
+      APP_DB_DRIVER: org.h2.Driver
+      APP_DB_DDL_AUTO: create-drop
 
     steps:
       - name: Checkout Code Repository
@@ -74,7 +79,7 @@ jobs:
           distribution: 'temurin'
           java-version: '26'
 
-      - name: Initialize Python Core
+      - name: Set up Python Core
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
