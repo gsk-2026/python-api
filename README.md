@@ -100,12 +100,12 @@ pytest a_api
 
 ## Environmental Verification Matrix
 
-| Target Microservice          | API Base URLs                        | Framework Engine | Suite Status |
-|:-----------------------------|:-------------------------------------|:-----------------|:-------------|
-| `practice_expandtesting_api` | practice.expandtesting.com/notes/api | Pytest & Locust  | 🟢 Active    |
-| `restful_booker_api`         | restful-booker.herokuapp.com         | Pytest & Locust  | 🟢 Active    |
-| `client_resource_access_api` | restful-booker.herokuapp.com         | Pytest & Locust  | 🟢 Active    |
-| `a_api` / `b_api`            | Scaled Business Testing Sub-systems  | Pytest           | 🟡 Planning  |
+| Target Microservice          | API Base URLs                         | Framework Engine | Suite Status |
+|:-----------------------------|:--------------------------------------|:-----------------|:-------------|
+| `practice_expandtesting_api` | practice.expandtesting.com/notes/api  | Pytest & Locust  | 🟢 Active    |
+| `restful_booker_api`         | restful-booker.herokuapp.com          | Pytest & Locust  | 🟢 Active    |
+| `client_resource_access_api` | github/.../client-resource-access-api | Pytest & Locust  | 🟢 Active    |
+| `a_api` / `b_api`            | Scaled Business Testing Sub-systems   | Pytest           | 🟡 Planning  |
 
 
 ---
